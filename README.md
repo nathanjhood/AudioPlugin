@@ -51,15 +51,17 @@ Each of the above four containers is divided across two files;
 
 All four containers are connected by an **"Audio Processor Value Tree State" ("APVTS")** object. The **"APVTS"** object is created and held in the Processor container, which then passes it forward to each of the other containers, before it is passed back to the Processor for further work.
 
-The Parameters container comes first - our plugin's internal parameters are created and defined in this container; including their various types (float value, boolean, multiple choice, etc), their min and max values, skew factors, and other details. These internal parameter objects (such as "volumeFader") are then passed into the APVTS, along with a relevant reference name ID (such as "volumeID").
+The Parameters container comes first - our plugin's internal parameters are created and defined in this container; including their various types (float value, boolean, multiple choice, etc), their min and max values, skew factors, and other details. These internal parameter objects (such as *"volumeFader"*) are then passed into the APVTS, along with a relevant reference name ID (such as *"volumeID"*).
 
-The Editor container is where our graphical elements, including knobs and sliders, are created and drawn to the screen. This container then takes in the APVTS, looks up the list of parameters we have filled it with, and attaches our graphical elements to the desired internal parameters, using the previously-allocated reference name ID (such as "volumeID"); thus, exposing our plugin's internal parameters to user control via the GUI. 
+The Editor container is where our graphical elements, including knobs and sliders, are created and drawn to the screen. This container then takes in the APVTS, looks up the list of parameters we have filled it with, and attaches our graphical elements to the desired internal parameters, using the previously-allocated reference name ID (such as *"volumeID"*); thus, exposing our plugin's internal parameters to user control via the GUI. 
 
-Finally, the Wrapper container creates and holds whatever audio DSP effects and processors we are implementing in our plugin. Each audio effect/processor's internal parameters (such as "setVolume(type newVolume)") are exposed to the APVTS inside this container; corresponding parameters are then connected to each other (again by reference such as "volumeID") by a shared memory allocation (such as "volumePtr"), which is strictly written to by the parameter and read by the audio, and *never* the other way around.
+Finally, the Wrapper container creates and holds whatever audio DSP effects and processors we are implementing in our plugin. Each audio effect/processor's internal parameters (such as *"setVolume(type newVolume)"*) are exposed to the APVTS inside this container; corresponding parameters are then connected to each other (again by reference such as *"volumeID"*) by a shared memory allocation (such as *"volumePtr"*), which is strictly written to by the parameter and read by the audio, and *never* the other way around.
 
 The Processor container provides some powerful connectivity between the APVTS and the outside world (the DAW/host). Here, the APVTS is given read/write access to memory (for presets, undo/redo, project re-loading, etc) using some XML functions. This means that every single object connected to the APVTS (usually meaning, parameter) can read from and write to it's own unique little memory address, which is a unique location on an object called a "value tree". This means that our audio processor now has a memory of it's own internal "state" - or, rather, it has an **"Audio Processor Value Tree state"**.
 
 More details soon. Please see my [Biquads repo](https://github.com/StoneyDSP/Biquads) for an example implementation meanwhile :)
+
+Don't forget you can always shoot me a PM - you can also look me up on most of the usual DSP/Audio software sites under @StoneyDSP!
 
 # To be done...
 + basic GUI for the built-in parameters
