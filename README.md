@@ -11,6 +11,8 @@ Built-in features:
 + defeatable GUI (requires window close/re-open)
 + de-coupled processing and true-bypass of audio processors in a lock-free atomic structure
 
+# Architecture
+
 The plugin template consists of four containers, each dedicated to it's own role:
 
 + Processor - contains all the interactions between host and plugin
@@ -35,7 +37,7 @@ The Processor container provides some powerful connectivity between the APVTS an
 
 More details soon. Please see my [Biquads repo](https://github.com/StoneyDSP/Biquads) for an example implementation meanwhile :)
 
-To be done...
+# To be done...
 + basic GUI for the built-in parameters
 + fix precision switching
 + fix variable number of channels/buses with oversampling
