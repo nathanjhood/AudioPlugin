@@ -32,6 +32,7 @@ Coffee! That's how I get things done!! If you'd like to see me get more things d
 + **Mix** - Blend between the effected (100%) and the dry signal (0%). Optional latency compensation.
 + **Precision** - Switch between Float precision (High Quality) and Double precision (beyond High Quality) in the audio path.
 + **Bypass** - Toggles the entire plugin on or off.
++ **GUI** - Toggles between a generic, automated GUI arrangement, or the custom one defined in the Editor files (requires window close/re-open)
 
 For further information, please continue reading. 
 
@@ -59,7 +60,7 @@ Finally, the Wrapper container creates and holds whatever audio DSP effects and 
 
 The Processor container provides some powerful connectivity between the APVTS and the outside world (the DAW/host). Here, the APVTS is given read/write access to memory (for presets, undo/redo, project re-loading, etc) using some XML functions. This means that every single object connected to the APVTS (usually meaning, parameter) can read from and write to it's own unique little memory address, which is a unique location on an object called a "value tree". This means that our audio processor now has a memory of it's own internal "state" - or, rather, it has an **"Audio Processor Value Tree state"**.
 
-More details soon. Please see my [Biquads repo](https://github.com/StoneyDSP/Biquads) for an example implementation meanwhile :)
+More details soon. Please see my [example implementation of a State Variable Filter plugin](https://github.com/StoneyDSP/AudioPlugin-SVF) built directly from this template, and also my [Biquads repo](https://github.com/StoneyDSP/Biquads) for an example of a deeper implementation meanwhile :)
 
 Don't forget you can always shoot me a PM - you can also look me up on most of the usual DSP/Audio software sites under @StoneyDSP!
 
