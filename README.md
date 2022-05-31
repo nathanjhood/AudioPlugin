@@ -49,7 +49,7 @@ Each of the above four containers is divided across two files;
 + **.h (header) file** - defines the functions of the container and exposes them as an interface
 + **.cpp (source) file** - defines the implementations of said functions of the container
 
-All four containers are connected by an **"Audio Processor Value Tree State" ("APVTS")** object. The **"APVTS"** object is created and held in the Processor container, which then passes it forward to each of the other containers, before it is passed back to the Processor for further work.
+All four containers are connected by a single **"Audio Processor Value Tree State" ("APVTS")** object. This **"APVTS"** object is created and held in the Processor container, which then passes it forward to each of the other containers, before it is passed back to the Processor for further work.
 
 The Parameters container comes first - our plugin's internal parameters are created and defined in this container; including their various types (float value, boolean, multiple choice, etc), their min and max values, skew factors, and other details. These internal parameter objects (such as *"volumeFader"*) are then passed into the APVTS, along with a relevant reference name ID (such as *"volumeID"*).
 
