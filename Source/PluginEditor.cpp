@@ -13,6 +13,18 @@
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p, APVTS& apvts)
     : AudioProcessorEditor (&p), audioProcessor(p), state(apvts)
 {
+    addAndMakeVisible(outputSlider);
+    outputAttach.reset(new APVTS::SliderAttachment(state, "outputID", outputSlider));
+
+    addAndMakeVisible(dryWetSlider);
+    dryWetAttach.reset(new APVTS::SliderAttachment(state, "mixID", dryWetSlider));
+
+    addAndMakeVisible(bypassButton);
+    bypassAttach.reset(new APVTS::ButtonAttachment(state, "bypassID", bypassButton));
+
+    addAndMakeVisible(displayButton);
+    displayAttach.reset(new APVTS::ButtonAttachment(state, "panelID", bypassButton));
+
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 
@@ -39,4 +51,11 @@ void AudioPluginAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
+
+    auto sliderLeft = 30;
+    outputSlider.setBounds(sliderLeft, 50, getWidth() - sliderLeft - 10, 20);
+    dryWetSlider.setBounds(sliderLeft, 100, getWidth() - sliderLeft - 10, 20);
+
+    bypassButton.setBounds(sliderLeft, 150, getWidth() - sliderLeft - 10, 20);
+    displayButton.setBounds(sliderLeft, 200, getWidth() - sliderLeft - 10, 20);
 }
