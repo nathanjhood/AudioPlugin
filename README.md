@@ -69,6 +69,26 @@ Don't forget you can always shoot me a PM - you can also look me up on most of t
 + fix variable number of channels/buses with oversampling
 + provide more examples...
 
+# ...not sure where to look?
+
+If perhaps you're new to the juce framework, or maybe even coding audio plugins in general, the above info might not be quite enough to guide you to get started on building a working audio plugin. Further guidance can be found all over the internet - in particular, the juce website and forum itself, as well as many popular youTube channels - but perhaps a further nudge wouldn't hurt :)
+
+You might start by exploring the "PluginWrapper.h/.cpp" files, as this is where all of the DSP and such is happening to the audio (check what's happening in "processSample"). This is the container where we call for a DSP module, attach parameters to it, and send our audio in/out of it. There is already a dry/wet mixer, and simple gain object, instantiated(in the .h or "header" file) and placed in the signal path (in the .cpp or "source" file). Can you also see where the parameters are being updated, and by what?
+
+Inside the "PluginParameter.h/.cpp" files, is a thankfully much less complex scene, and perhaps quite easy to grasp at a glance, compared to the Wrapper; these files are where we create and set ranges for our parameters. If we again look at the useage of the "header" and "source" files, we will see a similar pattern to what was in the Wrapper; that is, our "objects" (parameters) are "instantiated" (created) in the header file, and defined in the source file. This seperation and relationship is an important practice in "good coding" - though not *always* necessary.
+
+So what's the difference between the Parameter container, and the "PluginEditor.h/.cpp" files? Things look almost mistakeably similar at first, don't they? Actually, this container is strictly working with your display thread, to draw user-controllable elements (and coloured backgrounds, etc) and place them around within the plugin window. One of the main (visual) similarities to the Parameter container, is the list of our parameters in the "constructor", each following by a "cast" function and a command to "getParameter" from something called "apvts"...
+
+The "PluginProcessor.h/.cpp" files are something like the brain, or the motherboard, of our plugin. There are fewer user-controllable elements, and those on offer have a deeper relationship between the plugin, and the DAW or host in which the plugin is currently operating. This template has largely pre-configured the Processor files to allow for the widest set of expressions downstream (such as variable channel counts and processing precisions), but of course can be tinkered with as much as is necessary. It's thoroughly worth exploring the concept of "polymorphism" at play here, by looking for the call "public juce::AudioProcessor" and viewing it's definition(s). You can then trace how a similar method has been implemented in *all* of our containers, allowing us to query very low-level information, such as channel count, block size, or total latency, at *any* point in our plugin's architecture - just simply type "audioProcessor(dot)." and a list of functions will appear at your dispoal. This is a very powerful tool to have on hand when building, and further allows us to leave the Processor container alone, to act as a passive "translator" between the DAW/host and the plugin (*and* the user!).
+
+One of the deepest features of the Processor is the previously-described "Audio Processor Value Tree State". In my template, I have renamed this object to simply "APVTS" (or lower "apvts") for readability. Now that you've observed how an "object" is often "instantiated" in a header file, then "implemented" in source file, can you see where we're creating this APVTS object, and then what we're doing with it?
+
+If so, try having another read of the previous brief tutorial posted above :) 
+
+...and stay tuned for more!
+
+- Nathan (StoneyDSP) May 2022
+
 # Before you go...
 
 Coffee! That's how I get things done!! If you'd like to see me get more things done, please kindly consider <a href="https://www.patreon.com/bePatron?u=8549187" data-patreon-widget-type="become-patron-button">buying me a coffee</a> or two ;)
