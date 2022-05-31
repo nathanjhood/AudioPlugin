@@ -27,7 +27,7 @@ Coffee! That's how I get things done!! If you'd like to see me get more things d
 
 # Manual - v1.0.0b
 
-+ **IO** - Toggles the individual processContext on or off.
++ **IO** - Toggles the individual processContext on or off (useful in duplicates for independant bypass of several chained processors).
 + **Oversampling** - Increasing the oversampling will improve performance at high frequencies - at the cost of more CPU!
 + **Mix** - Blend between the effected (100%) and the dry signal (0%). Optional latency compensation.
 + **Precision** - Switch between Float precision (High Quality) and Double precision (beyond High Quality) in the audio path.
