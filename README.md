@@ -39,9 +39,9 @@ For further information, please continue reading.
 
 The plugin template consists of four containers, each dedicated to it's own role:
 
-+ Processor - contains all the interactions between host and plugin
-+ Editor - contains all graphical elements for user interaction
++ Processor - contains all the interactions between DAW/host, and plugin
 + Parameters - contains all the control information to be accessed by the Editor and sent to the Wrapper
++ Editor - contains all graphical elements for user interaction
 + Wrapper - contains all the functions and audio processors of the plugin
 
 Each of the above four containers is divided across two files;
@@ -53,7 +53,7 @@ All four containers are connected by an "Audio Processor Value Tree State" ("APV
 
 The Parameters container comes first - our parameters are created by this container, including their various types (float value, boolean, multiple choice, etc), their min and max values, skew factors, and other details. These parameter objects (such as "volumeFader") are then passed into the APVTS, along with a reference name ID (such as "volumeID").
 
-The Editor container is where our graphical elements, including knobs and sliders, are created and drawn to the screen. This container takes in the APVTS, looks up the list of parameters we have filled it with, and attaches our graphical elements to the matching parameters internally, using the previously-allocated reference name ID (such as "volumeID"). 
+The Editor container is where our graphical elements, including knobs and sliders, are created and drawn to the screen. This container takes in the APVTS, looks up the list of parameters we have filled it with, and attaches our graphical elements to the matching parameters internally, using the previously-allocated reference name ID (such as "volumeID"), exposing our plugin's internal parameters to user control via the GUI. 
 
 Finally, the Wrapper container creates and holds whatever audio effects and processors we are implementing in our plugin. Each effect/processor's internal parameters (such as "setVolume(type newVolume)" are exposed to the APVTS inside this container; these are then connected to each other by a memory allocation (such as "volumePtr"), which is written to by the parameter and read by the audio.
 
