@@ -27,15 +27,15 @@ Coffee! That's how I get things done!! If you'd like to see me get more things d
 
 # Manual - v1.0.0b
 
-+ IO - Toggles the filter band on or off.
++ IO - Toggles the individual processContext on or off.
 + Oversampling - Increasing the oversampling will improve performance at high frequencies - at the cost of more CPU!
-+ Mix - Blend between the filter affect (100%) and the dry signal (0%).
-+ Precision - Switch between Float precision (High Quality) and Double precision (beyond High Quality) in the audio path
++ Mix - Blend between the effected (100%) and the dry signal (0%). Optional latency compensation.
++ Precision - Switch between Float precision (High Quality) and Double precision (beyond High Quality) in the audio path.
 + Bypass - Toggles the entire plugin on or off.
 
 For further information, please continue reading. 
 
-# Architecture
+# Architecture of an AudioPlugin
 
 The plugin template consists of four containers, each dedicated to it's own role:
 
