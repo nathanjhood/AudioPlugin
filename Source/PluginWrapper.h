@@ -15,7 +15,7 @@
 
 #include <JuceHeader.h>
 
-class BiquadsAudioProcessor;
+class AudioPluginAudioProcessor;
 
 template <typename SampleType>
 class ProcessWrapper
@@ -24,7 +24,7 @@ public:
     using APVTS = juce::AudioProcessorValueTreeState;
     //==========================================================================
     /** Constructor. */
-    ProcessWrapper(BiquadsAudioProcessor& p, APVTS& apvts);
+    ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& apvts);
 
     //==========================================================================
     /** Initialises the processor. */
@@ -44,7 +44,7 @@ private:
     //==========================================================================
     // This reference is provided as a quick way for the wrapper to
     // access the processor object that created it.
-    BiquadsAudioProcessor& audioProcessor;
+    AudioPluginAudioProcessor& audioProcessor;
 
     //==========================================================================
     /** Sets the oversampling factor. */

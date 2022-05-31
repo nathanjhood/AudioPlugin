@@ -15,7 +15,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class BiquadsAudioProcessor;
+class AudioPluginAudioProcessor;
 
 class Parameters
 {
@@ -24,7 +24,7 @@ public:
     using Params = std::vector<std::unique_ptr<juce::RangedAudioParameter>>;
     //==========================================================================
     /** Constructor. */
-    Parameters(BiquadsAudioProcessor& p, APVTS& apvts);
+    Parameters(AudioPluginAudioProcessor& p, APVTS& apvts);
 
     //==========================================================================
     /** Create Parameter Layout. */
@@ -34,16 +34,11 @@ private:
     //==========================================================================
     // This reference is provided as a quick way for the wrapper to
     // access the processor object that created it.
-    BiquadsAudioProcessor& audioProcessor;
+    AudioPluginAudioProcessor& audioProcessor;
 
     //==========================================================================
     /** Parameter pointers. */
     juce::AudioParameterBool*               ioPtr                   { nullptr };
-    juce::AudioParameterFloat*              frequencyPtr            { nullptr };
-    juce::AudioParameterFloat*              resonancePtr            { nullptr };
-    juce::AudioParameterFloat*              gainPtr                 { nullptr };
-    juce::AudioParameterChoice*             typePtr                 { nullptr };
-    juce::AudioParameterChoice*             transformPtr            { nullptr };
     juce::AudioParameterChoice*             osPtr                   { nullptr };
     juce::AudioParameterFloat*              outputPtr               { nullptr };
     juce::AudioParameterFloat*              mixPtr                  { nullptr };
