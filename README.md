@@ -32,6 +32,7 @@ Coffee! That's how I get things done!! If you'd like to see me get more things d
 + **Mix** - Blend between the effected (100%) and the dry signal (0%). Optional latency compensation.
 + **Precision** - Switch between Float precision (High Quality) and Double precision (beyond High Quality) in the audio path.
 + **Bypass** - Toggles the entire plugin on or off.
++ **GUI** - Toggles between a generic, automated GUI arrangement, or the custom one defined in the Editor files (requires window close/re-open)
 
 For further information, please continue reading. 
 
