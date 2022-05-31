@@ -3,8 +3,6 @@ JUCE Audio Plugin template (under construction)
 
 Details soon. Please see my [Biquads repo](https://github.com/StoneyDSP/Biquads) for an example implementation meanwhile :)
 
-https://github.com/StoneyDSP/Biquads
-
 # Before you go...
 
 Coffee! That's how I get things done!! If you'd like to see me get more things done, please kindly consider <a href="https://www.patreon.com/bePatron?u=8549187" data-patreon-widget-type="become-patron-button">buying me a coffee</a> or two ;)
