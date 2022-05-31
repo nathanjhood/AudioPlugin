@@ -1,5 +1,9 @@
 # AudioPlugin
-JUCE Audio Plugin template
+JUCE Audio Plugin template (under construction)
+
+Details soon. Please see my Biquads repo for an example implementation meanwhile :)
+
+https://github.com/StoneyDSP/Biquads
 
 # Before you go...
 
