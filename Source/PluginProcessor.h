@@ -20,7 +20,7 @@ class AudioPluginAudioProcessor  : public juce::AudioProcessor
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
     using precisionType = ProcessingPrecision;
-    //==============================================================================
+    //==========================================================================
     AudioPluginAudioProcessor();
     ~AudioPluginAudioProcessor() override;
 

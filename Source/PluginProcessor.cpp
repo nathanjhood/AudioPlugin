@@ -44,17 +44,17 @@ juce::AudioProcessorValueTreeState& AudioPluginAudioProcessor::getAPVTS()
 
 juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::getParameterLayout()
 {
-    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+    APVTS::ParameterLayout params;
 
     Parameters::setParameterLayout(params);
 
     auto pString = juce::StringArray({ "Floats", "Doubles" });
 
-    params.push_back(std::make_unique<juce::AudioParameterChoice>("precisionID", "Precision", pString, 0));
-    params.push_back(std::make_unique<juce::AudioParameterBool>("bypassID", "Bypass", false));
-    params.push_back(std::make_unique<juce::AudioParameterBool>("panelID", "GUI", true));
+    params.add(std::make_unique<juce::AudioParameterChoice>("precisionID", "Precision", pString, 0));
+    params.add(std::make_unique<juce::AudioParameterBool>("bypassID", "Bypass", false));
+    params.add(std::make_unique<juce::AudioParameterBool>("panelID", "GUI", true));
 
-    return { params.begin(), params.end() };
+    return params;
 }
 
 //==============================================================================
@@ -278,7 +278,7 @@ bool AudioPluginAudioProcessor::hasEditor() const
 juce::AudioProcessorEditor* AudioPluginAudioProcessor::createEditor()
 {
     if (panelPtr->get() == true)
-        return new AudioPluginAudioProcessorEditor(*this, apvts);
+        return new AudioPluginAudioProcessorEditor(*this);
     else
         return new juce::GenericAudioProcessorEditor(*this);
 }

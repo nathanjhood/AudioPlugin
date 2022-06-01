@@ -21,7 +21,7 @@ class Parameters
 {
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
-    using Params = std::vector<std::unique_ptr<juce::RangedAudioParameter>>;
+    using Params = juce::AudioProcessorValueTreeState::ParameterLayout;
     //==========================================================================
     /** Constructor. */
     Parameters(AudioPluginAudioProcessor& p, APVTS& apvts);

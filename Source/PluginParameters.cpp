@@ -36,8 +36,8 @@ void Parameters::setParameterLayout(Params& params)
 
     auto osString = juce::StringArray({ "1x", "2x", "4x", "8x", "16x" });
 
-    params.push_back(std::make_unique<juce::AudioParameterBool>("ioID", "IO", false));
-    params.push_back(std::make_unique<juce::AudioParameterChoice>("osID", "Oversampling", osString, 0));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("outputID", "Output", gainRange, 00.00f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("mixID", "Mix", mixRange, 100.00f));
+    params.add(std::make_unique<juce::AudioParameterBool>("ioID", "IO", false));
+    params.add(std::make_unique<juce::AudioParameterChoice>("osID", "Oversampling", osString, 0));
+    params.add(std::make_unique<juce::AudioParameterFloat>("outputID", "Output", gainRange, 00.00f));
+    params.add(std::make_unique<juce::AudioParameterFloat>("mixID", "Mix", mixRange, 100.00f));
 }
