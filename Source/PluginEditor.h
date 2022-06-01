@@ -8,8 +8,9 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+#include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
+#include "Components/AutoComponent.h"
 
 //==============================================================================
 /**
@@ -18,9 +19,8 @@ class AudioPluginAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
-
     //==========================================================================
-    AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p, APVTS& apvts);
+    AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p);
     ~AudioPluginAudioProcessorEditor() override;
 
     //==========================================================================
@@ -33,15 +33,7 @@ private:
     AudioPluginAudioProcessor& audioProcessor;
     APVTS& state;
 
-    juce::Slider outputSlider;
-    juce::Slider dryWetSlider;
-    juce::ToggleButton bypassButton;
-    juce::ToggleButton displayButton;
-
-    std::unique_ptr<APVTS::SliderAttachment> outputAttach;
-    std::unique_ptr<APVTS::SliderAttachment> dryWetAttach;
-    std::unique_ptr<APVTS::ButtonAttachment> bypassAttach;
-    std::unique_ptr<APVTS::ButtonAttachment> displayAttach;
+    AutoComponent subComponents;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };
