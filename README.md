@@ -1,6 +1,8 @@
 # AudioPlugin
 JUCE Audio Plugin template
 
+![Build-01-06-2022](https://github.com/StoneyDSP/AudioPlugin/blob/6a5179a8ef21034db9b13a43c3ff4ed9c4134ce8/Res/Build-01-06-2022.png)
+
 # Built-in features:
 + variable oversampling up to 16x
 + variable processing precision (floats or doubles) [under construction]
