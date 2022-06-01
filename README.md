@@ -1,14 +1,15 @@
 # AudioPlugin
-JUCE Audio Plugin template (under construction)
+JUCE Audio Plugin template
 
 # Built-in features:
 + variable oversampling up to 16x
-+ variable processing precision (floats or doubles)
++ variable processing precision (floats or doubles) [under construction]
 + dry/wet mix with optional latency compensation
 + master output gain for "wet" signal
 + local context bypass switch
 + master bypass switch
-+ defeatable GUI (requires window close/re-open)
++ resizeable and defeatable GUI (requires window close/re-open)
++ "AutoComponent" GUI builder, automatically converts your APVTS entries into GUI elements :)
 + de-coupled processing and true-bypass of audio processors in a lock-free atomic structure
 
 # Before we begin...
