@@ -10,6 +10,34 @@
 
 #include "AutoComponent.h"
 
+AutoComponentLookAndFeel::AutoComponentLookAndFeel()
+{
+    ///* Knob style */
+    setColour(Slider::rotarySliderOutlineColourId, juce::Colours::lightgrey);
+    setColour(Slider::rotarySliderFillColourId, juce::Colours::darkgrey);
+    //setColour(Slider::backgroundColourId, juce::Colours::brown);
+    setColour(Slider::thumbColourId, juce::Colours::purple);
+    //setColour(Slider::trackColourId, juce::Colours::yellow);
+    setColour(Slider::textBoxTextColourId, juce::Colours::white);
+    setColour(Slider::textBoxBackgroundColourId, juce::Colours::grey);
+    setColour(Slider::textBoxHighlightColourId, juce::Colours::blue);
+    setColour(Slider::textBoxOutlineColourId, juce::Colours::lightgrey);
+
+    //* Button style */
+    setColour(Button::buttonDown, juce::Colours::orangered);
+    setColour(Button::buttonNormal, juce::Colours::darkgrey);
+    setColour(Button::buttonOver, juce::Colours::lightgrey);
+
+    ///* Text Button style */
+    //setColour(TextButton::buttonColourId, juce::Colours::grey);
+    setColour(TextButton::buttonOnColourId, juce::Colours::orangered);
+    setColour(TextButton::buttonNormal, juce::Colours::darkgrey);
+    setColour(TextButton::buttonOver, juce::Colours::lightgrey);
+    //setColour(TextButton::buttonDown, juce::Colours::green);
+    //setColour(TextButton::textColourOnId, juce::Colours::white);
+    //setColour(TextButton::textColourOffId, juce::Colours::transparentWhite);
+}
+
 AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda)
 {
     auto addSlider = [=, &apvts] (juce::AudioParameterFloat* param)
@@ -19,15 +47,14 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::functio
         addAndMakeVisible (newSlide->slider);
         newSlide->attachment.reset (new SliderAttachment (apvts, param->paramID, newSlide->slider));
 
-        //auto suffix = " " + param->paramID.fromLastOccurrenceOf ("_", false, false);
-        //newSlide->slider.setTextValueSuffix (suffix);
+        auto suffix = " " + param->getLabel().fromLastOccurrenceOf ("_", false, false);
+        newSlide->slider.setTextValueSuffix (suffix);
 
         newSlide->slider.setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
         newSlide->slider.setName (param->name);
         newSlide->slider.textFromValueFunction = nullptr; // @TODO: Don't override lambda from VTS
         newSlide->slider.setNumDecimalPlacesToDisplay (2);
-        newSlide->slider.setTextBoxStyle (Slider::TextBoxBelow, false, 75, 16);
-        newSlide->slider.setColour (Slider::textBoxOutlineColourId, Colours::transparentBlack);
+        newSlide->slider.setTextBoxStyle (Slider::TextBoxBelow, false, 60, 16);
         newSlide->slider.onValueChange = paramLambda;
 
         sliders.add (newSlide);
@@ -55,7 +82,6 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::functio
         addAndMakeVisible (newButton->button);
         newButton->button.setButtonText (param->name);
         newButton->button.setClickingTogglesState (true);
-        newButton->button.setColour (TextButton::buttonOnColourId, Colours::red);
         newButton->button.onStateChange = paramLambda;
 
         newButton->attachment.reset (new ButtonAttachment (apvts, param->paramID, newButton->button));
@@ -92,21 +118,38 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::functio
 //==============================================================================
 void AutoComponent::paint (juce::Graphics& g)
 {
-    g.fillAll (Colours::black);
+    //==========================================================================
+    /** Paint Slider/Box name. */
 
-    g.setColour (Colours::white);
-    auto makeName = [this, &g] (juce::Component& comp, juce::String name)
+    auto paintName = [this, &g] (juce::Component& comp, juce::String name)
     {
         const int height = 20;
-        Rectangle<int> nameBox (comp.getX(), 2, comp.getWidth(), height);
-        g.drawFittedText (name, nameBox, juce::Justification::centred, 1);
+        juce::Rectangle<int> nameBox (comp.getX(), 2, comp.getWidth(), height);
+        g.drawFittedText (name, nameBox, juce::Justification::centredBottom, 1);
     };
 
     for (auto* s : sliders)
-        makeName (s->slider, s->slider.getName());
+        paintName (s->slider, s->slider.getName());
 
     for (auto* b : boxes)
-        makeName (b->box, b->box.getName());
+        paintName (b->box, b->box.getName());
+
+    //==========================================================================
+    /** Apply local look and feel. */
+
+    auto applyLookAndFeel = [this, &g] (juce::Component& comp)
+    {
+        comp.setLookAndFeel(&lookAndfeel);
+    };
+
+    for (auto* s : sliders)
+        applyLookAndFeel (s->slider);
+
+    for (auto* b : boxes)
+        applyLookAndFeel (b->box);
+
+    for (auto* b : buttons)
+        applyLookAndFeel(b->button);
 }
 
 //==============================================================================

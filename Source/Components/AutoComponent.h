@@ -13,12 +13,23 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
-using ComboBoxAttachment = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
-using ButtonAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
+//==============================================================================
+/** Define AutoComponent instance local look and feel. */
+
+class AutoComponentLookAndFeel : public juce::LookAndFeel_V4
+{
+public:
+    using APVTS = juce::AudioProcessorValueTreeState;
+    //==========================================================================
+    AutoComponentLookAndFeel();
+};
 
 //==============================================================================
 /** Define parameter objects. */
+
+using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
+using ComboBoxAttachment = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
+using ButtonAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
 
 struct SliderWithAttachment
 {
@@ -57,6 +68,7 @@ public:
 private:
     //==========================================================================
     /** Instantiate members. */
+    AutoComponentLookAndFeel lookAndfeel;
     juce::OwnedArray<SliderWithAttachment> sliders;
     juce::OwnedArray<BoxWithAttachment> boxes;
     juce::OwnedArray<ButtonWithAttachment> buttons;
