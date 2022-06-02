@@ -11,7 +11,7 @@
 
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p)
-    : juce::AudioProcessorEditor(&p), audioProcessor(p), state(p.getAPVTS()), subComponents(p, p.getAPVTS())
+    : juce::AudioProcessorEditor(&p), audioProcessor(p), apvts(p.getAPVTS()), subComponents(p, p.getAPVTS())
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -30,13 +30,16 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll(juce::Colours::black);
+    g.fillAll(juce::Colours::antiquewhite);
 
     // Add text to background here
-    g.setColour (juce::Colours::white);
+    g.setColour (juce::Colours::darkslategrey);
     g.setFont (15.0f);
-    g.drawFittedText("yourCompany", getLocalBounds(), juce::Justification::topLeft, 1);
-    g.drawFittedText(audioProcessor.getName(), getLocalBounds(), juce::Justification::topRight, 1);
+    g.drawFittedText(ProjectInfo::companyName, getLocalBounds(), juce::Justification::topLeft, 1);
+    g.drawFittedText(ProjectInfo::projectName, getLocalBounds(), juce::Justification::topRight, 1);
+    g.drawFittedText(ProjectInfo::versionString, getLocalBounds(), juce::Justification::bottomRight, 1);
+
+    subComponents.paint(g);
 }
 
 void AudioPluginAudioProcessorEditor::resized()
