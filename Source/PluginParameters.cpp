@@ -34,10 +34,19 @@ void Parameters::setParameterLayout(Params& params)
     auto gainRange = juce::NormalisableRange<float>(dBMin, dBMax, 0.01f, 1.00f);
     const auto mixRange = juce::NormalisableRange<float>(00.00f, 100.00f, 0.01f, 1.00f);
 
-    auto osString = juce::StringArray({ "1x", "2x", "4x", "8x", "16x" });
+    auto osString = juce::StringArray ( { "--", "2x", "4x", "8x", "16x" } );
+
+    const auto decibels =       juce::String    { ( "dB" ) };
+    const auto frequency =      juce::String    { ( "Hz" ) };
+    const auto percentage =     juce::String    { ( "%" ) };
+    const auto milliseconds =   juce::String    { ( ".ms" ) };
+    const auto mult =           juce::String    { ( "x" ) };
+
+    auto flt = juce::AudioProcessorParameter::genericParameter;
+    auto outMeter = juce::AudioProcessorParameter::outputMeter;
 
     params.add(std::make_unique<juce::AudioParameterBool>("ioID", "IO", false));
     params.add(std::make_unique<juce::AudioParameterChoice>("osID", "Oversampling", osString, 0));
-    params.add(std::make_unique<juce::AudioParameterFloat>("outputID", "Output", gainRange, 00.00f));
-    params.add(std::make_unique<juce::AudioParameterFloat>("mixID", "Mix", mixRange, 100.00f));
+    params.add(std::make_unique<juce::AudioParameterFloat>("outputID", "Output", gainRange, 00.00f, decibels, flt));
+    params.add(std::make_unique<juce::AudioParameterFloat>("mixID", "Mix", mixRange, 100.00f, percentage, flt));
 }
