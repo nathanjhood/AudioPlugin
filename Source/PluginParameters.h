@@ -38,10 +38,10 @@ private:
 
     //==========================================================================
     /** Parameter pointers. */
-    juce::AudioParameterBool*               ioPtr                   { nullptr };
     juce::AudioParameterChoice*             osPtr                   { nullptr };
     juce::AudioParameterFloat*              outputPtr               { nullptr };
     juce::AudioParameterFloat*              mixPtr                  { nullptr };
+    juce::AudioParameterBool*               bypassPtr               { nullptr };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Parameters)
 };

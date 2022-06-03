@@ -14,17 +14,15 @@
 template <typename SampleType>
 ProcessWrapper<SampleType>::ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& apvts) : audioProcessor(p)
 {
-    ioPtr = dynamic_cast                <juce::AudioParameterBool*>         (apvts.getParameter("ioID"));
-    jassert(ioPtr != nullptr);
+    osPtr = static_cast <juce::AudioParameterChoice*> (apvts.getParameter("osID"));
+    outputPtr = static_cast <juce::AudioParameterFloat*> (apvts.getParameter("outputID"));
+    mixPtr = static_cast <juce::AudioParameterFloat*> (apvts.getParameter("mixID"));
+    bypassPtr = dynamic_cast <juce::AudioParameterBool*> (apvts.getParameter("bypassID"));
 
-    osPtr = dynamic_cast                <juce::AudioParameterChoice*>       (apvts.getParameter("osID"));
     jassert(osPtr != nullptr);
-
-    outputPtr = dynamic_cast            <juce::AudioParameterFloat*>        (apvts.getParameter("outputID"));
     jassert(outputPtr != nullptr);
-
-    mixPtr = dynamic_cast              <juce::AudioParameterFloat*>        (apvts.getParameter("mixID"));
     jassert(mixPtr != nullptr);
+    jassert(bypassPtr != nullptr);
 
     auto osChannels = audioProcessor.getTotalNumInputChannels();
 
@@ -89,6 +87,8 @@ void ProcessWrapper<SampleType>::update()
 {
     setOversampling();
 
+    //contextReplace.isBypassed = bypassPtr->get();
+
     mixer.setWetMixProportion(mixPtr->get() * 0.01f);
 
     output.setGainLinear(juce::Decibels::decibelsToGain(outputPtr->get()));
@@ -98,7 +98,7 @@ void ProcessWrapper<SampleType>::update()
 template <typename SampleType>
 void ProcessWrapper<SampleType>::process(juce::AudioBuffer<SampleType>& buffer, juce::MidiBuffer& midiMessages)
 {
-    juce::ignoreUnused(midiMessages);
+    midiMessages.clear();
 
     update();
 
@@ -108,12 +108,9 @@ void ProcessWrapper<SampleType>::process(juce::AudioBuffer<SampleType>& buffer, 
 
     juce::dsp::AudioBlock<SampleType> osBlock = overSample[curOS]->processSamplesUp(block);
 
-    auto context = juce::dsp::ProcessContextReplacing(osBlock);
+    //auto& context = contextReplace(osBlock);
 
-    if (ioPtr->get() == true)
-        context.isBypassed = true;
-    else
-        context.isBypassed = false;
+    auto context = juce::dsp::ProcessContextReplacing(osBlock);
 
     output.process(context);
 

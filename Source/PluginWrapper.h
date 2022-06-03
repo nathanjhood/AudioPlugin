@@ -13,7 +13,7 @@
 #ifndef PLUGINWRAPPER_H_INCLUDED
 #define PLUGINWRAPPER_H_INCLUDED
 
-#include <JuceHeader.h>
+#include "../JuceLibraryCode/JuceHeader.h"
 
 class AudioPluginAudioProcessor;
 
@@ -38,6 +38,7 @@ public:
     void update();
 
     //==========================================================================
+    //void process(juce::AudioBuffer<SampleType>& buffer, juce::MidiBuffer& midiMessages);
     void process(juce::AudioBuffer<SampleType>& buffer, juce::MidiBuffer& midiMessages);
 
 private:
@@ -56,15 +57,16 @@ private:
     //==========================================================================
     /** Instantiate objects. */
     juce::dsp::ProcessSpec spec;
+    //juce::dsp::ProcessContextReplacing<SampleType> contextReplace;
     juce::dsp::DryWetMixer<SampleType> mixer;
     juce::dsp::Gain<SampleType> output;
 
     //==========================================================================
     /** Parameter pointers. */
-    juce::AudioParameterBool*               ioPtr                   { nullptr };
     juce::AudioParameterChoice*             osPtr                   { nullptr };
     juce::AudioParameterFloat*              outputPtr               { nullptr };
     juce::AudioParameterFloat*              mixPtr                  { nullptr };
+    juce::AudioParameterBool*               bypassPtr               { nullptr };
 
     //==========================================================================
     /** Init variables. */

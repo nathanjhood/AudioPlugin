@@ -30,10 +30,12 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll(juce::Colours::antiquewhite);
+    g.fillAll(juce::Colours::darkslategrey);
+
+    
 
     // Add text to background here
-    g.setColour (juce::Colours::darkslategrey);
+    g.setColour (juce::Colours::antiquewhite);
     g.setFont (15.0f);
     g.drawFittedText(ProjectInfo::companyName, getLocalBounds(), juce::Justification::topLeft, 1);
     g.drawFittedText(ProjectInfo::projectName, getLocalBounds(), juce::Justification::topRight, 1);
