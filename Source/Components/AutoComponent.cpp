@@ -10,6 +10,14 @@
 
 #include "AutoComponent.h"
 
+/*
+  ==============================================================================
+
+    Look and Feel.
+
+  ==============================================================================
+*/
+
 AutoComponentLookAndFeel::AutoComponentLookAndFeel()
 {
     ///* Knob style */
@@ -17,7 +25,7 @@ AutoComponentLookAndFeel::AutoComponentLookAndFeel()
     setColour(Slider::rotarySliderFillColourId, juce::Colours::darkgrey);
     //setColour(Slider::backgroundColourId, juce::Colours::brown);
     setColour(Slider::thumbColourId, juce::Colours::purple);
-    //setColour(Slider::trackColourId, juce::Colours::yellow);
+    setColour(Slider::trackColourId, juce::Colours::black);
     setColour(Slider::textBoxTextColourId, juce::Colours::white);
     setColour(Slider::textBoxBackgroundColourId, juce::Colours::grey);
     setColour(Slider::textBoxHighlightColourId, juce::Colours::blue);
@@ -26,7 +34,7 @@ AutoComponentLookAndFeel::AutoComponentLookAndFeel()
     //* Button style */
     setColour(Button::buttonDown, juce::Colours::orangered);
     setColour(Button::buttonNormal, juce::Colours::darkgrey);
-    setColour(Button::buttonOver, juce::Colours::lightgrey);
+    setColour(Button::buttonOver, juce::Colours::lightslategrey);
 
     ///* Text Button style */
     //setColour(TextButton::buttonColourId, juce::Colours::grey);
@@ -37,6 +45,14 @@ AutoComponentLookAndFeel::AutoComponentLookAndFeel()
     //setColour(TextButton::textColourOnId, juce::Colours::white);
     //setColour(TextButton::textColourOffId, juce::Colours::transparentWhite);
 }
+
+/*
+  ==============================================================================
+
+    AutoComponent.
+
+  ==============================================================================
+*/
 
 AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda)
 {
@@ -65,6 +81,7 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::functio
         BoxWithAttachment* newBox = new BoxWithAttachment;
 
         addAndMakeVisible (newBox->box);
+
         newBox->box.setName (param->name);
         newBox->box.addItemList (param->choices, 1);
         newBox->box.setSelectedItemIndex (0);
@@ -80,6 +97,7 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::functio
         ButtonWithAttachment* newButton = new ButtonWithAttachment;
 
         addAndMakeVisible (newButton->button);
+
         newButton->button.setButtonText (param->name);
         newButton->button.setClickingTogglesState (true);
         newButton->button.onStateChange = paramLambda;
@@ -93,17 +111,26 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::functio
 
     for (auto* param : params)
     {
+        //======================================================================
+        /** If = ParameterFloat, make new Rotary Slider with Attachment */
+
         if (auto* paramFloat = dynamic_cast<juce::AudioParameterFloat*> (param))
         {
             addSlider (paramFloat);
             continue;
         }
 
+        //======================================================================
+        /** If = ParameterChoice, make new Box with Attachment */
+
         if (auto* paramChoice = dynamic_cast<juce::AudioParameterChoice*> (param))
         {
             addBox (paramChoice);
             continue;
         }
+        
+        //======================================================================
+        /** If = ParameterBool, make new Button with Attachment */
 
         if (auto* paramBool = dynamic_cast<juce::AudioParameterBool*> (param))
         {
@@ -116,6 +143,7 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::functio
 }
 
 //==============================================================================
+
 void AutoComponent::paint (juce::Graphics& g)
 {
     //==========================================================================
@@ -135,7 +163,7 @@ void AutoComponent::paint (juce::Graphics& g)
         paintName (b->box, b->box.getName());
 
     //==========================================================================
-    /** Apply local look and feel. */
+    /** Apply local Look and Feel. */
 
     auto applyLookAndFeel = [this, &g] (juce::Component& comp)
     {
@@ -153,10 +181,16 @@ void AutoComponent::paint (juce::Graphics& g)
 }
 
 //==============================================================================
+
 void AutoComponent::resized()
 {
+    //==========================================================================
+    /** This is generally where you'll want to lay out the positions of any
+    /** subcomponents in your editor... */
+    
     int x = 5;
     bool first = true;
+
     for (auto* s : sliders)
     {
         int offset = first ? 0 : 20;
@@ -167,7 +201,7 @@ void AutoComponent::resized()
 
     for (auto* b : boxes)
     {
-        int offset = first ? 0 : 5;
+        int offset = first ? 0 : 05;
         b->box.setBounds (x - offset, 40, 70, 20);
         x = b->box.getRight();
         first = false;
@@ -175,7 +209,7 @@ void AutoComponent::resized()
 
     for (auto* b : buttons)
     {
-        int offset = first ? 0 : 5;
+        int offset = first ? 0 : 05;
         b->button.setBounds (x - offset, 40, 70, 20);
         x = b->button.getRight();
         first = false;

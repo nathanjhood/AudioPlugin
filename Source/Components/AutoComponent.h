@@ -13,19 +13,31 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-//==============================================================================
-/** Define AutoComponent instance local look and feel. */
+/*
+  ==============================================================================
+
+    Look and Feel.
+
+  ==============================================================================
+*/
 
 class AutoComponentLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
+
     //==========================================================================
+    /** Constructor. */
     AutoComponentLookAndFeel();
 };
 
-//==============================================================================
-/** Define parameter objects. */
+/*
+  ==============================================================================
+
+    Define parameter objects.
+
+  ==============================================================================
+*/
 
 using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
 using ComboBoxAttachment = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
@@ -49,8 +61,13 @@ struct ButtonWithAttachment
     std::unique_ptr<ButtonAttachment> attachment;
 };
 
-//==============================================================================
-/** Define AutoComponent. */
+/*
+  ==============================================================================
+
+    AutoComponent.
+
+  ==============================================================================
+*/
 
 class AutoComponent : public juce::Component
 {
