@@ -57,7 +57,6 @@ private:
     //==========================================================================
     /** Instantiate objects. */
     juce::dsp::ProcessSpec spec;
-    //juce::dsp::ProcessContextReplacing<SampleType> contextReplace;
     juce::dsp::DryWetMixer<SampleType> mixer;
     juce::dsp::Gain<SampleType> output;
 

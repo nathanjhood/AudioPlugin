@@ -87,8 +87,6 @@ void ProcessWrapper<SampleType>::update()
 {
     setOversampling();
 
-    //contextReplace.isBypassed = bypassPtr->get();
-
     mixer.setWetMixProportion(mixPtr->get() * 0.01f);
 
     output.setGainLinear(juce::Decibels::decibelsToGain(outputPtr->get()));
@@ -108,9 +106,9 @@ void ProcessWrapper<SampleType>::process(juce::AudioBuffer<SampleType>& buffer, 
 
     juce::dsp::AudioBlock<SampleType> osBlock = overSample[curOS]->processSamplesUp(block);
 
-    //auto& context = contextReplace(osBlock);
-
     auto context = juce::dsp::ProcessContextReplacing(osBlock);
+
+    context.isBypassed = bypassPtr->get();
 
     output.process(context);
 
