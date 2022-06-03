@@ -14,22 +14,14 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
                        .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        )
 #endif
 {
-    doublesPtr = dynamic_cast       <juce::AudioParameterChoice*>    (apvts.getParameter("precisionID"));
-    jassert(doublesPtr != nullptr);
-
-    bypassPtr = dynamic_cast       <juce::AudioParameterBool*>    (apvts.getParameter("bypassID"));
+    bypassPtr = static_cast <juce::AudioParameterBool*>(apvts.getParameter("bypassID"));
     jassert(bypassPtr != nullptr);
-
-    panelPtr = dynamic_cast       <juce::AudioParameterBool*>    (apvts.getParameter("panelID"));
-    jassert(panelPtr != nullptr);
 }
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
@@ -48,12 +40,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::g
 
     Parameters::setParameterLayout(params);
 
-    auto pString = juce::StringArray({ "Floats", "Doubles" });
-
-    params.add(std::make_unique<juce::AudioParameterChoice>("precisionID", "Precision", pString, 0));
-    params.add(std::make_unique<juce::AudioParameterBool>("bypassID", "Bypass", false));
-    params.add(std::make_unique<juce::AudioParameterBool>("panelID", "GUI", true));
-
     return params;
 }
 
@@ -65,10 +51,7 @@ juce::AudioProcessorParameter* AudioPluginAudioProcessor::getBypassParameter() c
 
 bool AudioPluginAudioProcessor::supportsDoublePrecisionProcessing() const
 {
-    if (processingPrecision == doublePrecision)
-        return true;
-    else
-        return false;
+    return true;
 }
 
 juce::AudioProcessor::ProcessingPrecision AudioPluginAudioProcessor::getProcessingPrecision() const noexcept
@@ -99,29 +82,17 @@ const juce::String AudioPluginAudioProcessor::getName() const
 
 bool AudioPluginAudioProcessor::acceptsMidi() const
 {
-   #if JucePlugin_WantsMidiInput
-    return true;
-   #else
     return false;
-   #endif
 }
 
 bool AudioPluginAudioProcessor::producesMidi() const
 {
-   #if JucePlugin_ProducesMidiOutput
-    return true;
-   #else
     return false;
-   #endif
 }
 
 bool AudioPluginAudioProcessor::isMidiEffect() const
 {
-   #if JucePlugin_IsMidiEffect
-    return true;
-   #else
     return false;
-   #endif
 }
 
 double AudioPluginAudioProcessor::getTailLengthSeconds() const
@@ -164,6 +135,7 @@ void AudioPluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerB
     // initialisation that you need..
 
     getProcessingPrecision();
+    
 
     processorFloat.prepare(sampleRate, samplesPerBlock);
     processorDouble.prepare(sampleRate, samplesPerBlock);
@@ -193,10 +165,6 @@ void AudioPluginAudioProcessor::numChannelsChanged()
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
-    return true;
-  #else
     // This is the place where you check if the layout is supported.
     // In this template code we only support mono or stereo.
     // Some plugin hosts, such as certain GarageBand versions, will only
@@ -206,55 +174,42 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
         return false;
 
     // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
-   #endif
 
     return true;
-  #endif
 }
 #endif
 
 //==============================================================================
 void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    isUsingDoublePrecision();
+    if (bypassPtr->get() == true)
+    {
+        processBlockBypassed(buffer, midiMessages);
+    }
 
-    if (doublesPtr->getIndex() == 0)
+    else
+    {
+        juce::ScopedNoDenormals noDenormals;
 
-        if (bypassPtr->get() == false)
-
-        {
-            juce::ScopedNoDenormals noDenormals;
-
-            processorFloat.process(buffer, midiMessages);
-        }
-
-        else
-        {
-            processBlockBypassed(buffer, midiMessages);
-        }
+        processorFloat.process(buffer, midiMessages);
+    }
 }
 
 void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
 {
-    isUsingDoublePrecision();
+    if (bypassPtr->get() == true)
+    {
+        processBlockBypassed(buffer, midiMessages);
+    }
 
-    if (doublesPtr->getIndex() == 1)
+    else
+    {
+        juce::ScopedNoDenormals noDenormals;
 
-        if (bypassPtr->get() == false)
-
-        {
-            juce::ScopedNoDenormals noDenormals;
-
-            processorDouble.process(buffer, midiMessages);
-        }
-
-        else
-        {
-            processBlockBypassed(buffer, midiMessages);
-        }
+        processorDouble.process(buffer, midiMessages);
+    }
 }
 
 void AudioPluginAudioProcessor::processBlockBypassed(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
@@ -277,10 +232,7 @@ bool AudioPluginAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* AudioPluginAudioProcessor::createEditor()
 {
-    if (panelPtr->get() == true)
-        return new AudioPluginAudioProcessorEditor(*this);
-    else
-        return new juce::GenericAudioProcessorEditor(*this);
+    return new AudioPluginAudioProcessorEditor(*this);
 }
 
 //==============================================================================
