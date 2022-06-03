@@ -21,10 +21,11 @@
 AutoComponentLookAndFeel::AutoComponentLookAndFeel()
 {
     ///* Knob style */
-    setColour(Slider::rotarySliderOutlineColourId, juce::Colours::lightgrey);
-    setColour(Slider::rotarySliderFillColourId, juce::Colours::darkgrey);
+    setColour(Slider::rotarySliderOutlineColourId, juce::Colours::purple);
+    setColour(Slider::rotarySliderFillColourId, juce::Colours::lightgrey);
+    //setColourScheme();
     //setColour(Slider::backgroundColourId, juce::Colours::brown);
-    setColour(Slider::thumbColourId, juce::Colours::purple);
+    setColour(Slider::thumbColourId, juce::Colours::pink);
     setColour(Slider::trackColourId, juce::Colours::black);
     setColour(Slider::textBoxTextColourId, juce::Colours::white);
     setColour(Slider::textBoxBackgroundColourId, juce::Colours::grey);
@@ -45,6 +46,11 @@ AutoComponentLookAndFeel::AutoComponentLookAndFeel()
     //setColour(TextButton::textColourOnId, juce::Colours::white);
     //setColour(TextButton::textColourOffId, juce::Colours::transparentWhite);
 }
+
+//int AutoComponentLookAndFeel::setColourScheme()
+//{
+//
+//}
 
 /*
   ==============================================================================

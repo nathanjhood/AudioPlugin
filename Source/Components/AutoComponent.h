@@ -29,6 +29,7 @@ public:
     //==========================================================================
     /** Constructor. */
     AutoComponentLookAndFeel();
+    //int setColourScheme();
 };
 
 /*
