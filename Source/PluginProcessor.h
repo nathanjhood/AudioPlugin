@@ -25,10 +25,6 @@ public:
     ~AudioPluginAudioProcessor() override;
 
     //==========================================================================
-    APVTS& getAPVTS();
-    static APVTS::ParameterLayout getParameterLayout();
-
-    //==========================================================================
     juce::AudioProcessorParameter* getBypassParameter() const;
     bool supportsDoublePrecisionProcessing() const override;
     ProcessingPrecision getProcessingPrecision() const noexcept;
@@ -71,10 +67,12 @@ public:
     void getStateInformation(juce::MemoryBlock& destData) override;
     void setStateInformation(const void* data, int sizeInBytes) override;
 
-protected:
     //==========================================================================
     /** Audio processor value tree. */
-    APVTS apvts { *this, nullptr, "Parameters", getParameterLayout() };
+    juce::UndoManager undoManager;
+    APVTS apvts;
+    APVTS& getAPVTS() { return apvts; };
+    static APVTS::ParameterLayout createParameterLayout();
 
 private:
     //==========================================================================

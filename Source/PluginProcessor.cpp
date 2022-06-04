@@ -10,15 +10,10 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-AudioPluginAudioProcessor::AudioPluginAudioProcessor()
-#ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       )
-#endif
+AudioPluginAudioProcessor::AudioPluginAudioProcessor() : AudioProcessor(BusesProperties()
+        .withInput("Input", juce::AudioChannelSet::stereo(), true)
+        .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
+    apvts (*this, &undoManager, "Parameters", createParameterLayout())
 {
     bypassPtr = static_cast <juce::AudioParameterBool*>(apvts.getParameter("bypassID"));
     jassert(bypassPtr != nullptr);
@@ -26,21 +21,6 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
 {
-}
-
-//==============================================================================
-juce::AudioProcessorValueTreeState& AudioPluginAudioProcessor::getAPVTS()
-{
-    return apvts;
-}
-
-juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::getParameterLayout()
-{
-    APVTS::ParameterLayout params;
-
-    Parameters::setParameterLayout(params);
-
-    return params;
 }
 
 //==============================================================================
@@ -152,17 +132,14 @@ void AudioPluginAudioProcessor::releaseResources()
 
 void AudioPluginAudioProcessor::numBusesChanged()
 {
-    processorFloat.reset();
-    processorDouble.reset();
+    releaseResources();
 }
 
 void AudioPluginAudioProcessor::numChannelsChanged()
 {
-    processorFloat.reset();
-    processorDouble.reset();
+    releaseResources();
 }
 
-#ifndef JucePlugin_PreferredChannelConfigurations
 bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
     // This is the place where you check if the layout is supported.
@@ -179,7 +156,6 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 
     return true;
 }
-#endif
 
 //==============================================================================
 void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
@@ -232,7 +208,16 @@ bool AudioPluginAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* AudioPluginAudioProcessor::createEditor()
 {
-    return new AudioPluginAudioProcessorEditor(*this);
+    return new AudioPluginAudioProcessorEditor(*this, getAPVTS() );
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::createParameterLayout()
+{
+    APVTS::ParameterLayout params;
+
+    Parameters::setParameterLayout(params);
+
+    return params;
 }
 
 //==============================================================================

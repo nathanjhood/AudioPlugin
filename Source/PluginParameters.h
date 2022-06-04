@@ -35,13 +35,7 @@ private:
     // This reference is provided as a quick way for the wrapper to
     // access the processor object that created it.
     AudioPluginAudioProcessor& audioProcessor;
-
-    //==========================================================================
-    /** Parameter pointers. */
-    juce::AudioParameterChoice*             osPtr                   { nullptr };
-    juce::AudioParameterFloat*              outputPtr               { nullptr };
-    juce::AudioParameterFloat*              mixPtr                  { nullptr };
-    juce::AudioParameterBool*               bypassPtr               { nullptr };
+    APVTS& state;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Parameters)
 };

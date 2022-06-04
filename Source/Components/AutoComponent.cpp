@@ -20,37 +20,38 @@
 
 AutoComponentLookAndFeel::AutoComponentLookAndFeel()
 {
+    //setColourScheme(LookAndFeel_V4::getMidnightColourScheme());
+    /*LookAndFeel_V4::getLightColourScheme();
+    LookAndFeel_V4::getDarkColourScheme();
+    LookAndFeel_V4::getGreyColourScheme();
+    LookAndFeel_V4::getMidnightColourScheme();*/
+
     ///* Knob style */
-    setColour(Slider::rotarySliderOutlineColourId, juce::Colours::purple);
-    setColour(Slider::rotarySliderFillColourId, juce::Colours::lightgrey);
+    setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::purple);
+    setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::lightgrey);
     //setColourScheme();
     //setColour(Slider::backgroundColourId, juce::Colours::brown);
-    setColour(Slider::thumbColourId, juce::Colours::pink);
-    setColour(Slider::trackColourId, juce::Colours::black);
-    setColour(Slider::textBoxTextColourId, juce::Colours::white);
-    setColour(Slider::textBoxBackgroundColourId, juce::Colours::grey);
-    setColour(Slider::textBoxHighlightColourId, juce::Colours::blue);
-    setColour(Slider::textBoxOutlineColourId, juce::Colours::lightgrey);
+    setColour(juce::Slider::thumbColourId, juce::Colours::pink);
+    setColour(juce::Slider::trackColourId, juce::Colours::black);
+    setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
+    setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::grey);
+    setColour(juce::Slider::textBoxHighlightColourId, juce::Colours::blue);
+    setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::lightgrey);
 
     //* Button style */
-    setColour(Button::buttonDown, juce::Colours::orangered);
-    setColour(Button::buttonNormal, juce::Colours::darkgrey);
-    setColour(Button::buttonOver, juce::Colours::lightslategrey);
+    setColour(juce::Button::buttonDown, juce::Colours::orangered);
+    setColour(juce::Button::buttonNormal, juce::Colours::darkgrey);
+    setColour(juce::Button::buttonOver, juce::Colours::lightslategrey);
 
     ///* Text Button style */
     //setColour(TextButton::buttonColourId, juce::Colours::grey);
-    setColour(TextButton::buttonOnColourId, juce::Colours::orangered);
-    setColour(TextButton::buttonNormal, juce::Colours::darkgrey);
-    setColour(TextButton::buttonOver, juce::Colours::lightgrey);
+    setColour(juce::TextButton::buttonOnColourId, juce::Colours::orangered);
+    setColour(juce::TextButton::buttonNormal, juce::Colours::darkgrey);
+    setColour(juce::TextButton::buttonOver, juce::Colours::lightgrey);
     //setColour(TextButton::buttonDown, juce::Colours::green);
     //setColour(TextButton::textColourOnId, juce::Colours::white);
     //setColour(TextButton::textColourOffId, juce::Colours::transparentWhite);
 }
-
-//int AutoComponentLookAndFeel::setColourScheme()
-//{
-//
-//}
 
 /*
   ==============================================================================
@@ -60,7 +61,7 @@ AutoComponentLookAndFeel::AutoComponentLookAndFeel()
   ==============================================================================
 */
 
-AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda)
+AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda, std::function<juce::String(double)> apvtsLambda)
 {
     auto addSlider = [=, &apvts] (juce::AudioParameterFloat* param)
     {
@@ -72,11 +73,12 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::functio
         auto suffix = " " + param->getLabel().fromLastOccurrenceOf ("_", false, false);
         newSlide->slider.setTextValueSuffix (suffix);
 
-        newSlide->slider.setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
+        newSlide->slider.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
         newSlide->slider.setName (param->name);
-        newSlide->slider.textFromValueFunction = nullptr; // @TODO: Don't override lambda from VTS
+        newSlide->slider.textFromValueFunction = apvtsLambda;
+        //newSlide->slider.textFromValueFunction = nullptr; // @TODO: Don't override lambda from VTS
         newSlide->slider.setNumDecimalPlacesToDisplay (2);
-        newSlide->slider.setTextBoxStyle (Slider::TextBoxBelow, false, 60, 16);
+        newSlide->slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 60, 16);
         newSlide->slider.onValueChange = paramLambda;
 
         sliders.add (newSlide);
@@ -158,8 +160,11 @@ void AutoComponent::paint (juce::Graphics& g)
     auto paintName = [this, &g] (juce::Component& comp, juce::String name)
     {
         const int height = 20;
-        juce::Rectangle<int> nameBox (comp.getX(), 2, comp.getWidth(), height);
-        g.drawFittedText (name, nameBox, juce::Justification::centredBottom, 1);
+        const int initialY = 2;
+        juce::Rectangle<int> nameBox (comp.getX(), initialY, comp.getWidth(), height);
+        g.setColour(juce::Colours::antiquewhite);
+        g.setFont(15.0f);
+        g.drawFittedText (name, nameBox, juce::Justification::centred, 1);
     };
 
     for (auto* s : sliders)

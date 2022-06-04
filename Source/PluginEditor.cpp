@@ -10,8 +10,8 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p)
-    : juce::AudioProcessorEditor(&p), audioProcessor(p), apvts(p.getAPVTS()), subComponents(p, p.getAPVTS())
+AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p, APVTS& apvts)
+    : juce::AudioProcessorEditor(&p), audioProcessor(p), state(apvts), subComponents(p, apvts)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -32,8 +32,6 @@ void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(juce::Colours::darkslategrey);
 
-    
-
     // Add text to background here
     g.setColour (juce::Colours::antiquewhite);
     g.setFont (15.0f);
@@ -41,7 +39,7 @@ void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawFittedText(ProjectInfo::projectName, getLocalBounds(), juce::Justification::topRight, 1);
     g.drawFittedText(ProjectInfo::versionString, getLocalBounds(), juce::Justification::bottomRight, 1);
 
-    subComponents.paint(g);
+    
 }
 
 void AudioPluginAudioProcessorEditor::resized()

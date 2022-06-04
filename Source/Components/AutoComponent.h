@@ -29,7 +29,6 @@ public:
     //==========================================================================
     /** Constructor. */
     AutoComponentLookAndFeel();
-    //int setColourScheme();
 };
 
 /*
@@ -76,7 +75,7 @@ public:
     using APVTS = juce::AudioProcessorValueTreeState;
     //==========================================================================
     /** Constructor. */
-    AutoComponent (juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda = {});
+    AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda = {}, std::function<juce::String(double)> apvtsLambda = {});
 
     //==========================================================================
     /** Component methods. */

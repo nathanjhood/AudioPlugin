@@ -14,6 +14,7 @@
 #define PLUGINWRAPPER_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Modules/Biquads.h"
 
 class AudioPluginAudioProcessor;
 
@@ -34,18 +35,18 @@ public:
     void reset();
 
     //==========================================================================
-    /** Updates the internal state variables of the processor. */
-    void update();
+    void process(juce::AudioBuffer<SampleType>& buffer, juce::MidiBuffer& midiMessages);
 
     //==========================================================================
-    //void process(juce::AudioBuffer<SampleType>& buffer, juce::MidiBuffer& midiMessages);
-    void process(juce::AudioBuffer<SampleType>& buffer, juce::MidiBuffer& midiMessages);
+    /** Updates the internal state variables of the processor. */
+    void update();
 
 private:
     //==========================================================================
     // This reference is provided as a quick way for the wrapper to
     // access the processor object that created it.
     AudioPluginAudioProcessor& audioProcessor;
+    APVTS& state;
 
     //==========================================================================
     /** Sets the oversampling factor. */
@@ -58,10 +59,17 @@ private:
     /** Instantiate objects. */
     juce::dsp::ProcessSpec spec;
     juce::dsp::DryWetMixer<SampleType> mixer;
+    Biquads<SampleType> biquad;
     juce::dsp::Gain<SampleType> output;
 
     //==========================================================================
     /** Parameter pointers. */
+    juce::AudioParameterFloat*              freqPtr                 { nullptr };
+    juce::AudioParameterFloat*              resPtr                  { nullptr };
+    juce::AudioParameterFloat*              gainPtr                 { nullptr };
+    juce::AudioParameterChoice*             typePtr                 { nullptr };
+    juce::AudioParameterChoice*             transPtr                { nullptr };
+
     juce::AudioParameterChoice*             osPtr                   { nullptr };
     juce::AudioParameterFloat*              outputPtr               { nullptr };
     juce::AudioParameterFloat*              mixPtr                  { nullptr };

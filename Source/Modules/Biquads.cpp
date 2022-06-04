@@ -141,14 +141,33 @@ void Biquads<SampleType>::reset(SampleType initialValue)
 template <typename SampleType>
 SampleType Biquads<SampleType>::processSample(int channel, SampleType inputValue)
 {
-    jassert(isPositiveAndBelow(channel, Wn_1.size()));
-    jassert(isPositiveAndBelow(channel, Wn_2.size()));
-    jassert(isPositiveAndBelow(channel, Xn_1.size()));
-    jassert(isPositiveAndBelow(channel, Xn_2.size()));
-    jassert(isPositiveAndBelow(channel, Yn_1.size()));
-    jassert(isPositiveAndBelow(channel, Yn_1.size()));
+    jassert(juce::isPositiveAndBelow(channel, Wn_1.size()));
+    jassert(juce::isPositiveAndBelow(channel, Wn_2.size()));
+    jassert(juce::isPositiveAndBelow(channel, Xn_1.size()));
+    jassert(juce::isPositiveAndBelow(channel, Xn_2.size()));
+    jassert(juce::isPositiveAndBelow(channel, Yn_1.size()));
+    jassert(juce::isPositiveAndBelow(channel, Yn_1.size()));
 
-    if (transformType == TransformationType::directFormI)
+
+    switch (transformType)
+    {
+    case TransformationType::directFormI:
+        inputValue = directFormI(channel, inputValue);
+        break;
+    case TransformationType::directFormII:
+        inputValue = directFormII(channel, inputValue);
+        break;
+    case TransformationType::directFormItransposed:
+        inputValue = directFormITransposed(channel, inputValue);
+        break;
+    case TransformationType::directFormIItransposed:
+        inputValue = directFormIITransposed(channel, inputValue);
+        break;
+    default:
+        inputValue = directFormIITransposed(channel, inputValue);
+    }
+
+    /*if (transformType == TransformationType::directFormI)
         inputValue = directFormI(channel, inputValue);
 
     else if (transformType == TransformationType::directFormII)
@@ -158,7 +177,7 @@ SampleType Biquads<SampleType>::processSample(int channel, SampleType inputValue
         inputValue = directFormITransposed(channel, inputValue);
 
     else
-        inputValue = directFormIITransposed(channel, inputValue);
+        inputValue = directFormIITransposed(channel, inputValue);*/
 
     return inputValue;
 }

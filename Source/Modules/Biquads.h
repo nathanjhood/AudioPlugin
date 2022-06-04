@@ -162,12 +162,7 @@ private:
 
     //==============================================================================
     /** Unit-delay objects. */
-    std::vector<SampleType> Wn_1;
-    std::vector<SampleType> Wn_2;
-    std::vector<SampleType> Xn_1;
-    std::vector<SampleType> Xn_2;
-    std::vector<SampleType> Yn_1;
-    std::vector<SampleType> Yn_2;
+    std::vector<SampleType> Wn_1, Wn_2, Xn_1, Xn_2, Yn_1, Yn_2;
 
     //==============================================================================
     /** Initialise the coefficient gains. */
@@ -186,22 +181,13 @@ private:
 
     //==============================================================================
     /** Initialise the parameters. */
-    SampleType minFreq = 20.0;
-    SampleType maxFreq = 20000.0;
-    SampleType hz = 1000.0;
-    SampleType q = 0.5;
-    SampleType g = 0.0;
-
+    SampleType minFreq = 20.0, maxFreq = 20000.0, hz = 1000.0, q = 0.5, g = 0.0;
     filterType filtType = filterType::lowPass2;
     transformationType transformType = transformationType::directFormIItransposed;
 
     //==============================================================================
     /** Initialise constants. */
-    const SampleType zero = (0.0);
-    const SampleType one = (1.0);
-    const SampleType two = (2.0);
-    const SampleType minusOne = (-1.0);
-    const SampleType minusTwo = (-2.0);
+    const SampleType zero = (0.0), one = (1.0), two = (2.0), minusOne = (-1.0), minusTwo = (-2.0);
     const SampleType pi = (juce::MathConstants<SampleType>::pi);
 
     //==============================================================================

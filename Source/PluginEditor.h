@@ -20,7 +20,7 @@ class AudioPluginAudioProcessorEditor  : public juce::AudioProcessorEditor
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
     //==========================================================================
-    AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p);
+    AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p, APVTS& apvts);
     ~AudioPluginAudioProcessorEditor() override;
 
     //==========================================================================
@@ -31,7 +31,8 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     AudioPluginAudioProcessor& audioProcessor;
-    APVTS& apvts;
+    APVTS& state;
+
     //CustomLookAndFeel customLookAndFeel;
     AutoComponent subComponents;
 
