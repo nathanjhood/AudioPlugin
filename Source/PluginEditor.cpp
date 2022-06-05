@@ -20,6 +20,8 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
     addAndMakeVisible(subComponents);
     setSize(subComponents.getWidth() * 1.333, subComponents.getHeight() * 1.333);
     setResizable(true, false);
+
+    startTimerHz(24);
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
@@ -27,6 +29,11 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 }
 
 //==============================================================================
+void AudioPluginAudioProcessorEditor::timerCallback()
+{
+    subComponents.resized();
+}
+
 void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)

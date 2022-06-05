@@ -10,12 +10,13 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
-#include "Components/AutoComponent.h"
+//#include "Components/AutoComponent.h"
+#include "Components/AutoKnob.h"
 
 //==============================================================================
 /**
 */
-class AudioPluginAudioProcessorEditor  : public juce::AudioProcessorEditor
+class AudioPluginAudioProcessorEditor  : public juce::AudioProcessorEditor, public juce::Timer
 {
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
@@ -24,6 +25,7 @@ public:
     ~AudioPluginAudioProcessorEditor() override;
 
     //==========================================================================
+    void timerCallback() override;
     void paint (juce::Graphics&) override;
     void resized() override;
 
@@ -34,7 +36,7 @@ private:
     APVTS& state;
 
     //CustomLookAndFeel customLookAndFeel;
-    AutoComponent subComponents;
+    AutoKnob subComponents;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };
