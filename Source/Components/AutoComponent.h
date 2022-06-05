@@ -3,7 +3,7 @@
 
     AutoComponent.h
     Created: 30 May 2022 2:54:47pm
-    Author:  (?) & StoneyDSP
+    Author:  StoneyDSP
 
   ==============================================================================
 */
@@ -75,7 +75,7 @@ public:
     using APVTS = juce::AudioProcessorValueTreeState;
     //==========================================================================
     /** Constructor. */
-    AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda = {}, std::function<juce::String(double)> apvtsLambda = {});
+    AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda = {}, std::function<juce::String(double)>&& apvtsLambda = {});
 
     //==========================================================================
     /** Component methods. */
@@ -89,6 +89,8 @@ private:
     juce::OwnedArray<SliderWithAttachment> sliders;
     juce::OwnedArray<BoxWithAttachment> boxes;
     juce::OwnedArray<ButtonWithAttachment> buttons;
+
+    const std::function<juce::String(double)> valueSupplier;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AutoComponent)
 };

@@ -61,7 +61,7 @@ AutoComponentLookAndFeel::AutoComponentLookAndFeel()
   ==============================================================================
 */
 
-AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda, std::function<juce::String(double)> apvtsLambda)
+AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda, std::function<juce::String(double)>&& apvtsLambda) : valueSupplier(std::move(apvtsLambda) )
 {
     auto addSlider = [=, &apvts] (juce::AudioParameterFloat* param)
     {
@@ -75,7 +75,7 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::functio
 
         newSlide->slider.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
         newSlide->slider.setName (param->name);
-        newSlide->slider.textFromValueFunction = apvtsLambda;
+        newSlide->slider.textFromValueFunction = valueSupplier;
         //newSlide->slider.textFromValueFunction = nullptr; // @TODO: Don't override lambda from VTS
         newSlide->slider.setNumDecimalPlacesToDisplay (2);
         newSlide->slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 60, 16);
@@ -212,7 +212,7 @@ void AutoComponent::resized()
 
     for (auto* b : boxes)
     {
-        int offset = first ? 0 : 05;
+        int offset = first ? 0 : 0;
         b->box.setBounds (x - offset, 40, 70, 20);
         x = b->box.getRight();
         first = false;
@@ -220,7 +220,7 @@ void AutoComponent::resized()
 
     for (auto* b : buttons)
     {
-        int offset = first ? 0 : 05;
+        int offset = first ? 0 : 0;
         b->button.setBounds (x - offset, 40, 70, 20);
         x = b->button.getRight();
         first = false;
