@@ -39,12 +39,12 @@ public:
   ==============================================================================
 */
 
-using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
+using KnobAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
 
-struct SliderWithAttachment
+struct KnobWithAttachment
 {
-    juce::Slider slider;
-    std::unique_ptr<SliderAttachment> attachment;
+    juce::Slider knob;
+    std::unique_ptr<KnobAttachment> attachment;
 };
 
 /*
@@ -62,6 +62,7 @@ public:
     //==========================================================================
     /** Constructor. */    
     AutoKnob(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda = {}, std::function<juce::String(double)>&& apvtsLambda = {});
+    ~AutoKnob() override;
 
     //==========================================================================
     /** Component methods. */
@@ -72,7 +73,7 @@ private:
     //==========================================================================
     /** Instantiate members. */
     AutoKnobLookAndFeel lookAndfeel;
-    juce::OwnedArray<SliderWithAttachment> sliders;
+    juce::OwnedArray<KnobWithAttachment> knobs;
 
     std::function<void()> lambdaSupplier;
     const std::function<juce::String(double)> valueSupplier;
