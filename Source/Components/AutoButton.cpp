@@ -84,7 +84,8 @@ AutoButton::AutoButton(juce::AudioProcessor& p, APVTS& apvts, std::function<void
         }
     }
 
-    setSize(getWidth(), 100);
+    //setSize(getWidth(), 100);
+    setSize(getWidth(), getHeight());
 
 }
 
@@ -97,8 +98,13 @@ void AutoButton::paint (juce::Graphics& g)
     //==========================================================================
     /** Paint Knob border. */
 
-    g.setColour(juce::Colours::black);
+    g.setColour(juce::Colours::lightslategrey);
     g.drawRect(getLocalBounds(), 5);
+
+    // Add project info text to background here
+    g.setColour(juce::Colours::antiquewhite);
+    g.setFont(15.0f);
+    g.drawFittedText("Buttons", getLocalBounds(), juce::Justification::centredTop, 1);
 
     //==========================================================================
     /** Apply local Look and Feel. */
@@ -118,7 +124,7 @@ void AutoButton::resized()
     /** This is generally where you'll want to lay out the positions of any
     /** subcomponents in your editor... */
 
-    int x = 5;
+    int x = 20;
     bool first = true;
 
     auto width = getWidth();
@@ -130,8 +136,8 @@ void AutoButton::resized()
 
     for (auto* b : buttons)
     {
-        int offset = first ? 0 : 0;
-        b->button.setBounds(width / 3, absCentreY, 70, 20);
+        int offset = first ? 0 : -5;
+        b->button.setBounds(x - offset, absCentreY, 70, 20);
         x = b->button.getRight();
         first = false;
     }
