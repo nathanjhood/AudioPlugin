@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 //#include "Components/AutoComponent.h"
 #include "Components/AutoKnob.h"
+#include "Components/AutoButton.h"
 
 //==============================================================================
 /**
@@ -36,7 +37,8 @@ private:
     APVTS& state;
 
     //CustomLookAndFeel customLookAndFeel;
-    AutoKnob subComponents;
+    AutoKnob knobComponents;
+    AutoButton buttonComponents;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };
