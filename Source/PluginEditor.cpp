@@ -10,16 +10,21 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p, APVTS& apvts)
-    : juce::AudioProcessorEditor(&p), audioProcessor(p), state(apvts), knobComponents(p, apvts), buttonComponents(p, apvts)
+AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p, APVTS& apvts, juce::UndoManager& um)
+    : juce::AudioProcessorEditor(&p), audioProcessor(p), state(apvts), undoManager(um), knobComponents(p, apvts), buttonComponents(p, apvts)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 
-    setSize (400, 300);
+    setSize (500, 600);
     addAndMakeVisible(buttonComponents);
     addAndMakeVisible(knobComponents);
-    setSize(buttonComponents.getWidth() * 1.333, buttonComponents.getHeight() * 1.333);
+
+    addAndMakeVisible(undoButton);
+    addAndMakeVisible(redoButton);
+    undoButton.onClick = [this] { undoManager.undo(); };
+    redoButton.onClick = [this] { undoManager.redo(); };
+
     setResizable(true, false);
 
     startTimerHz(24);
@@ -34,6 +39,7 @@ void AudioPluginAudioProcessorEditor::timerCallback()
 {
     knobComponents.resized();
     buttonComponents.resized();
+    undoManager.beginNewTransaction();
 }
 
 void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
@@ -41,7 +47,7 @@ void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(juce::Colours::darkslategrey);
 
-    // draw an outline around the component
+    //// draw an outline around the component
     g.setColour(juce::Colours::black);
     g.drawRect(getLocalBounds(), 5);
 
@@ -63,6 +69,7 @@ void AudioPluginAudioProcessorEditor::resized()
     auto width = getWidth();
     auto height = getHeight();
     auto bounds = getBounds();
+    auto left = 0;
     auto right = getRight();
     auto bottom = getBottom();
 
@@ -94,6 +101,13 @@ void AudioPluginAudioProcessorEditor::resized()
     // width / 3 = middle
     // width / 2 = right half
 
-    knobComponents.setBounds(absCentreX, absCentreY, thirdW, thirdH);
+    knobComponents.setBounds(left, absCentreY, wholeW, thirdH);
     buttonComponents.setBounds(halfW, 1 / bottom, halfW, height / 4);
+
+
+    auto r = getLocalBounds();
+
+    auto buttons = r.removeFromBottom(20);
+    undoButton.setBounds(buttons.removeFromLeft(100));
+    redoButton.setBounds(buttons.removeFromLeft(100));
 }

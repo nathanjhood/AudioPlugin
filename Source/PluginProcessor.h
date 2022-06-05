@@ -65,7 +65,10 @@ public:
 
     //==========================================================================
     void getStateInformation(juce::MemoryBlock& destData) override;
+    void getCurrentProgramStateInformation(juce::MemoryBlock& destData) override;
     void setStateInformation(const void* data, int sizeInBytes) override;
+    void setCurrentProgramStateInformation(const void* data, int sizeInBytes) override;
+    
 
     //==========================================================================
     /** Audio processor value tree. */
