@@ -37,6 +37,7 @@ void Parameters::setParameterLayout(Params& params)
     const auto reso =           juce::String    { ( "q"  ) };
     const auto percentage =     juce::String    { ( "%"  ) };
     const auto milliseconds =   juce::String    { ( ".ms" ) };
+    const auto inOut = juce::String{ ("IO") };
 
     std::function<void()> paramLambda;
     std::function<juce::String(float, int)> floatLambda;
@@ -46,6 +47,12 @@ void Parameters::setParameterLayout(Params& params)
     auto inMeter = juce::AudioProcessorParameter::inputMeter;
     auto outParam = juce::AudioProcessorParameter::outputGain;
     auto outMeter = juce::AudioProcessorParameter::outputMeter;
+    
+    juce::ignoreUnused(inMeter);
+    juce::ignoreUnused(outMeter);
+
+    //std::function<juce::String(bool, int)> textFromBool;
+    //std::function<bool()> boolFromText;
 
     params.add(std::make_unique<juce::AudioProcessorParameterGroup>("masterID", "0", "seperator",
         std::make_unique<juce::AudioParameterChoice>("osID", "Oversampling", osString, 0),
