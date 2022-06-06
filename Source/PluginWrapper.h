@@ -41,6 +41,10 @@ public:
     /** Updates the internal state variables of the processor. */
     void update();
 
+    //==========================================================================
+    /** Sets the oversampling factor. */
+    void setOversampling();
+
 private:
     //==========================================================================
     // This reference is provided as a quick way for the wrapper to
@@ -49,20 +53,23 @@ private:
     APVTS& state;
 
     //==========================================================================
-    /** Sets the oversampling factor. */
-    void setOversampling();
-
-    //==========================================================================
     std::unique_ptr<juce::dsp::Oversampling<SampleType>> overSample[5];
 
     //==========================================================================
     /** Instantiate objects. */
     juce::dsp::ProcessSpec spec;
     juce::dsp::DryWetMixer<SampleType> mixer;
+    Biquads<SampleType> biquad;
     juce::dsp::Gain<SampleType> output;
 
     //==========================================================================
     /** Parameter pointers. */
+
+    juce::AudioParameterFloat* frequencyPtr{ nullptr };
+    juce::AudioParameterFloat* resonancePtr{ nullptr };
+    juce::AudioParameterFloat* gainPtr{ nullptr };
+    juce::AudioParameterChoice* typePtr{ nullptr };
+
     juce::AudioParameterChoice*             osPtr                   { nullptr };
     juce::AudioParameterFloat*              outputPtr               { nullptr };
     juce::AudioParameterFloat*              mixPtr                  { nullptr };

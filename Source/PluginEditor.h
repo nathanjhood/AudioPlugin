@@ -12,6 +12,8 @@
 #include "PluginProcessor.h"
 //#include "Components/AutoComponent.h"
 #include "Components/AutoKnob.h"
+#include "Components/AutoButton.h"
+#include "Components/AutoComboBox.h"
 
 //==============================================================================
 /**
@@ -21,7 +23,7 @@ class AudioPluginAudioProcessorEditor  : public juce::AudioProcessorEditor, publ
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
     //==========================================================================
-    AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p, APVTS& apvts);
+    AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p, APVTS& apvts, juce::UndoManager& um);
     ~AudioPluginAudioProcessorEditor() override;
 
     //==========================================================================
@@ -34,9 +36,14 @@ private:
     // access the processor object that created it.
     AudioPluginAudioProcessor& audioProcessor;
     APVTS& state;
+    juce::UndoManager& undoManager;
 
     //CustomLookAndFeel customLookAndFeel;
-    AutoKnob subComponents;
+    AutoKnob knobComponents;
+    AutoButton buttonComponents;
+    AutoComboBox comboBoxComponents;
+
+    juce::TextButton undoButton, redoButton;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };

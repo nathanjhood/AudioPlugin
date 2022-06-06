@@ -1,15 +1,15 @@
 /*
   ==============================================================================
 
-    AutoKnob.h
+    AutoComboBox.cpp
     Created: 30 May 2022 2:54:47pm
-    Author:  StoneyDSP
+    Author: StoneyDSP
 
   ==============================================================================
 */
 
-#ifndef AUTOKNOB_H_INCLUDED
-#define AUTOKNOB_H_INCLUDED
+#ifndef AUTOCOMBOBOX_H_INCLUDED
+#define AUTOCOMBOBOX_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
@@ -21,14 +21,14 @@
   ==============================================================================
 */
 
-class AutoKnobLookAndFeel : public juce::LookAndFeel_V4
+class AutoComboBoxLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
 
     //==========================================================================
     /** Constructor. */
-    AutoKnobLookAndFeel();
+    AutoComboBoxLookAndFeel();
 };
 
 /*
@@ -39,31 +39,30 @@ public:
   ==============================================================================
 */
 
-using KnobAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
+using ComboBoxAttachment = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
 
-struct KnobWithAttachment
+struct BoxWithAttachment
 {
-    juce::Slider knob;
-    std::unique_ptr<KnobAttachment> attachment;
+    juce::ComboBox box;
+    std::unique_ptr<ComboBoxAttachment> attachment;
 };
 
 /*
   ==============================================================================
 
-    AutoKnob.
+    AutoComboBox.
 
   ==============================================================================
 */
 
-class AutoKnob : public juce::Component
+class AutoComboBox : public juce::Component
 {
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
-    using Lambda = const std::function<void()>;
     //==========================================================================
-    /** Constructor. */    
-    AutoKnob(juce::AudioProcessor& p, APVTS& apvts, Lambda& paramLambda = {});
-    ~AutoKnob() override;
+    /** Constructor. */
+    AutoComboBox(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda = {});
+    ~AutoComboBox() override;
 
     //==========================================================================
     /** Component methods. */
@@ -71,16 +70,14 @@ public:
     void resized() override;
 
 private:
-    Lambda& lambdaSupplier;
-
     //==========================================================================
     /** Instantiate members. */
-    AutoKnobLookAndFeel lookAndfeel;
-    juce::OwnedArray<KnobWithAttachment> knobs;
+    AutoComboBoxLookAndFeel lookAndfeel;
+    juce::OwnedArray<BoxWithAttachment> boxes;
 
-    
+    std::function<void()> lambdaSupplier;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AutoKnob)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AutoComboBox)
 };
 
-#endif //AUTOKNOB_H_INCLUDED
+#endif //AUTOCOMBOBOX_H_INCLUDED

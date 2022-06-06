@@ -21,10 +21,10 @@
 AutoKnobLookAndFeel::AutoKnobLookAndFeel()
 {
     ///* Knob style */
-    setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::purple);
-    setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::lightgrey);
+    setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::darkgrey);
+    setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::lightslategrey);
     setColour(juce::Slider::backgroundColourId, juce::Colours::brown);
-    setColour(juce::Slider::thumbColourId, juce::Colours::pink);
+    setColour(juce::Slider::thumbColourId, juce::Colours::orangered);
     setColour(juce::Slider::trackColourId, juce::Colours::black);
     setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
     setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::grey);
@@ -40,27 +40,27 @@ AutoKnobLookAndFeel::AutoKnobLookAndFeel()
   ==============================================================================
 */
 
-AutoKnob::AutoKnob(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda, std::function<juce::String(double)>&& apvtsLambda) : valueSupplier(std::move(apvtsLambda))
+AutoKnob::AutoKnob(juce::AudioProcessor& p, APVTS& apvts, Lambda& paramLambda) : lambdaSupplier(paramLambda)
 {
-    auto addSlider = [=, &apvts](juce::AudioParameterFloat* param)
+    auto addKnob = [=, &apvts] (juce::AudioParameterFloat* param)
     {
-        SliderWithAttachment* newSlide = new SliderWithAttachment;
+        KnobWithAttachment* newKnob = new KnobWithAttachment;
         
-        addAndMakeVisible(newSlide->slider);
-        newSlide->attachment.reset(new SliderAttachment(apvts, param->paramID, newSlide->slider));
+        addAndMakeVisible(newKnob->knob);
+        newKnob->attachment.reset(new KnobAttachment(apvts, param->paramID, newKnob->knob));
 
         auto suffix = " " + param->getLabel().fromLastOccurrenceOf("_", false, false);
-        newSlide->slider.setTextValueSuffix(suffix);
+        newKnob->knob.setTextValueSuffix(suffix);
 
-        newSlide->slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-        newSlide->slider.setName(param->name);
-        newSlide->slider.textFromValueFunction = valueSupplier;
-        //newSlide->slider.textFromValueFunction = nullptr; // @TODO: Don't override lambda from VTS
-        newSlide->slider.setNumDecimalPlacesToDisplay(2);
-        newSlide->slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 16);
-        newSlide->slider.onValueChange = paramLambda;
+        newKnob->knob.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+        newKnob->knob.setName(param->name);
+        //newKnob->knob.textFromValueFunction = valueSupplier;
+        newKnob->knob.textFromValueFunction = nullptr; // @TODO: Don't override lambda from VTS
+        newKnob->knob.setNumDecimalPlacesToDisplay(2);
+        newKnob->knob.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 16);
+        newKnob->knob.onValueChange = paramLambda;
 
-        sliders.add(newSlide);
+        knobs.add(newKnob);
     };
 
     auto params = p.getParameters();
@@ -72,33 +72,50 @@ AutoKnob::AutoKnob(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> 
 
         if (auto* paramFloat = dynamic_cast<juce::AudioParameterFloat*> (param))
         {
-            addSlider(paramFloat);
+            addKnob(paramFloat);
             continue;
         }
     }
 
-    setSize(getWidth(), 100);
+    setSize(getWidth(), getHeight());
+    
+}
+
+AutoKnob::~AutoKnob()
+{
 }
 
 //==============================================================================
-
 void AutoKnob::paint(juce::Graphics& g)
 {
     //==========================================================================
-    /** Paint Slider/Box name. */
+    /** Paint Knob border. */
+
+    g.setColour(juce::Colours::lightslategrey);
+    g.drawRect(getLocalBounds(), 5);
+
+    // Add project info text to background here
+    g.setColour(juce::Colours::antiquewhite);
+    g.setFont(15.0f);
+    g.drawFittedText("Knobs", getLocalBounds(), juce::Justification::centredTop, 1);
+
+    //==========================================================================
+    /** Paint Slider name. */
 
     auto paintName = [this, &g](juce::Component& comp, juce::String name)
     {
         const int height = 20;
         const int initialY = 2;
-        juce::Rectangle<int> nameBox(comp.getX(), initialY, comp.getWidth(), height);
+
+        juce::Rectangle<int> nameBox(comp.getX(), comp.getY() / 2 /*initialY*/, comp.getWidth(), height);
+
         g.setColour(juce::Colours::antiquewhite);
         g.setFont(15.0f);
-        g.drawFittedText(name, nameBox, juce::Justification::centred, 1);
+        g.drawFittedText(name, nameBox, juce::Justification::centredBottom, 1);
     };
 
-    for (auto* s : sliders)
-        paintName(s->slider, s->slider.getName());
+    for (auto* k : knobs)
+        paintName(k->knob, k->knob.getName());
 
     //==========================================================================
     /** Apply local Look and Feel. */
@@ -108,8 +125,8 @@ void AutoKnob::paint(juce::Graphics& g)
         comp.setLookAndFeel(&lookAndfeel);
     };
 
-    for (auto* s : sliders)
-        applyLookAndFeel(s->slider);
+    for (auto* k : knobs)
+        applyLookAndFeel(k->knob);
 }
 
 //==============================================================================
@@ -119,16 +136,31 @@ void AutoKnob::resized()
     //==========================================================================
     /** This is generally where you'll want to lay out the positions of any
     /** subcomponents in your editor... */
-
+    
     int x = 5;
     bool first = true;
 
-    for (auto* s : sliders)
+    auto width = getWidth();
+    auto height = getHeight();
+    auto bounds = getBounds();
+
+    auto absCentreX = getWidth() / 3;
+    auto absCentreY = getHeight() / 3;
+
+    for (auto* k : knobs)
     {
-        int offset = first ? 0 : 20;
-        s->slider.setBounds(x - offset, 15, 85, 80);
-        x = s->slider.getRight();
+        int offset = first ? 0 : 20; // horizontal separation
+        k->knob.setBounds(x - offset, absCentreY, 85, 80);
+        x = k->knob.getRight();
         first = false;
     }
+
+    //for (auto* k : knobs)
+    //{
+    //    int offset = first ? 0 : 20; // horizontal separation
+    //    k->knob.setBounds(x - offset, 15, 85, 80);
+    //    x = k->knob.getRight();
+    //    first = false;
+    //}
 }
 //==============================================================================
