@@ -40,9 +40,9 @@ AutoKnobLookAndFeel::AutoKnobLookAndFeel()
   ==============================================================================
 */
 
-AutoKnob::AutoKnob(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda, std::function<juce::String(double)>&& apvtsLambda) : valueSupplier(std::move(apvtsLambda))
+AutoKnob::AutoKnob(juce::AudioProcessor& p, APVTS& apvts, Lambda& paramLambda) : lambdaSupplier(paramLambda)
 {
-    auto addKnob = [=, &apvts](juce::AudioParameterFloat* param)
+    auto addKnob = [=, &apvts] (juce::AudioParameterFloat* param)
     {
         KnobWithAttachment* newKnob = new KnobWithAttachment;
         
@@ -91,7 +91,7 @@ void AutoKnob::paint(juce::Graphics& g)
     //==========================================================================
     /** Paint Knob border. */
 
-    g.setColour(juce::Colours::black);
+    g.setColour(juce::Colours::lightslategrey);
     g.drawRect(getLocalBounds(), 5);
 
     // Add project info text to background here
@@ -136,7 +136,7 @@ void AutoKnob::resized()
     //==========================================================================
     /** This is generally where you'll want to lay out the positions of any
     /** subcomponents in your editor... */
-
+    
     int x = 5;
     bool first = true;
 
@@ -144,10 +144,13 @@ void AutoKnob::resized()
     auto height = getHeight();
     auto bounds = getBounds();
 
+    auto absCentreX = getWidth() / 3;
+    auto absCentreY = getHeight() / 3;
+
     for (auto* k : knobs)
     {
         int offset = first ? 0 : 20; // horizontal separation
-        k->knob.setBounds(x - offset, height / 3, 85, 80);
+        k->knob.setBounds(x - offset, absCentreY, 85, 80);
         x = k->knob.getRight();
         first = false;
     }

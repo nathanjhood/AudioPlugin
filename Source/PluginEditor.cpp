@@ -11,7 +11,7 @@
 
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p, APVTS& apvts, juce::UndoManager& um)
-    : juce::AudioProcessorEditor(&p), audioProcessor(p), state(apvts), undoManager(um), knobComponents(p, apvts), buttonComponents(p, apvts)
+    : juce::AudioProcessorEditor(&p), audioProcessor(p), state(apvts), undoManager(um), knobComponents(p, apvts), buttonComponents(p, apvts), comboBoxComponents(p, apvts)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -19,12 +19,11 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
     setSize (500, 600);
     addAndMakeVisible(buttonComponents);
     addAndMakeVisible(knobComponents);
-
+    addAndMakeVisible(comboBoxComponents);
     addAndMakeVisible(undoButton);
     addAndMakeVisible(redoButton);
     undoButton.onClick = [this] { undoManager.undo(); };
     redoButton.onClick = [this] { undoManager.redo(); };
-
     setResizable(true, false);
 
     startTimerHz(24);
@@ -39,6 +38,7 @@ void AudioPluginAudioProcessorEditor::timerCallback()
 {
     knobComponents.resized();
     buttonComponents.resized();
+    comboBoxComponents.resized();
     undoManager.beginNewTransaction();
 }
 
@@ -57,8 +57,6 @@ void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawFittedText(ProjectInfo::companyName, getLocalBounds(), juce::Justification::topLeft, 1);
     g.drawFittedText(ProjectInfo::projectName, getLocalBounds(), juce::Justification::topRight, 1);
     g.drawFittedText(ProjectInfo::versionString, getLocalBounds(), juce::Justification::bottomRight, 1);
-
-    
 }
 
 void AudioPluginAudioProcessorEditor::resized()
@@ -95,14 +93,9 @@ void AudioPluginAudioProcessorEditor::resized()
     auto thirdW = getWidth() / 3;
     auto thirdH = getHeight() / 3;
 
-
-    // .setBounds int x ( 
-    // 0 = left half
-    // width / 3 = middle
-    // width / 2 = right half
-
     knobComponents.setBounds(left, absCentreY, wholeW, thirdH);
     buttonComponents.setBounds(halfW, 1 / bottom, halfW, height / 4);
+    comboBoxComponents.setBounds(halfW, bottom - (halfH /2) , halfW, height / 4);
 
 
     auto r = getLocalBounds();

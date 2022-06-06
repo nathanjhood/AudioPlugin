@@ -47,9 +47,10 @@ class AutoButton  : public juce::Component
 {
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
+    using Lambda = const std::function<void()>;
     //==========================================================================
     /** Constructor. */
-    AutoButton(juce::AudioProcessor& p, APVTS& apvts, std::function<void()>&& paramLambda = {});
+    AutoButton(juce::AudioProcessor& p, APVTS& apvts, Lambda& paramLambda = {});
     ~AutoButton() override;
 
     //==========================================================================
@@ -58,12 +59,11 @@ public:
     void resized() override;
 
 private:
+    Lambda& lambdaSupplier;
     //==========================================================================
     /** Instantiate members. */
     AutoButtonLookAndFeel lookAndfeel;
     juce::OwnedArray<ButtonWithAttachment> buttons;
-
-    const std::function<void()>&& lambdaSupplier;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AutoButton)
 };

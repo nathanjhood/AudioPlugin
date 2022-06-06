@@ -41,6 +41,7 @@ private:
     //CustomLookAndFeel customLookAndFeel;
     AutoKnob knobComponents;
     AutoButton buttonComponents;
+    AutoComboBox comboBoxComponents;
 
     juce::TextButton undoButton, redoButton;
 

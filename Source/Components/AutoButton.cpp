@@ -50,7 +50,7 @@ AutoButtonLookAndFeel::AutoButtonLookAndFeel()
 */
 
 //==============================================================================
-AutoButton::AutoButton(juce::AudioProcessor& p, APVTS& apvts, std::function<void()>&& paramLambda) : lambdaSupplier(std::move(paramLambda))
+AutoButton::AutoButton(juce::AudioProcessor& p, APVTS& apvts, Lambda& paramLambda) : lambdaSupplier(paramLambda)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -60,12 +60,11 @@ AutoButton::AutoButton(juce::AudioProcessor& p, APVTS& apvts, std::function<void
         ButtonWithAttachment* newButton = new ButtonWithAttachment;
 
         addAndMakeVisible(newButton->button);
+        newButton->attachment.reset(new ButtonAttachment(apvts, param->paramID, newButton->button));
 
         newButton->button.setButtonText(param->name);
         newButton->button.setClickingTogglesState(true);
         newButton->button.onStateChange = paramLambda;
-
-        newButton->attachment.reset(new ButtonAttachment(apvts, param->paramID, newButton->button));
 
         buttons.add(newButton);
     };

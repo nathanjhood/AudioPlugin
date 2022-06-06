@@ -10,6 +10,9 @@
       <GROUP id="{A788D5D8-1543-C4C9-5BEA-AA5E7F923F17}" name="Components">
         <FILE id="URfaTS" name="AutoButton.cpp" compile="1" resource="0" file="Source/Components/AutoButton.cpp"/>
         <FILE id="lqykc4" name="AutoButton.h" compile="0" resource="0" file="Source/Components/AutoButton.h"/>
+        <FILE id="UWcTTJ" name="AutoComboBox.cpp" compile="1" resource="0"
+              file="Source/Components/AutoComboBox.cpp"/>
+        <FILE id="yDUMik" name="AutoComboBox.h" compile="0" resource="0" file="Source/Components/AutoComboBox.h"/>
         <FILE id="EWFkeX" name="AutoComponent.cpp" compile="1" resource="0"
               file="Source/Components/AutoComponent.cpp"/>
         <FILE id="MnpHIh" name="AutoComponent.h" compile="0" resource="0" file="Source/Components/AutoComponent.h"/>
