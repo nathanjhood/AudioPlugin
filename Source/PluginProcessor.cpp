@@ -10,9 +10,11 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-AudioPluginAudioProcessor::AudioPluginAudioProcessor() : AudioProcessor(BusesProperties()
-        .withInput("Input", juce::AudioChannelSet::stereo(), true)
-        .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
+AudioPluginAudioProcessor::AudioPluginAudioProcessor() 
+    : 
+    AudioProcessor(BusesProperties().withInput("Input",     juce::AudioChannelSet::stereo(), true)
+                                    .withOutput("Output",   juce::AudioChannelSet::stereo(), true)
+                  ),
     apvts (*this, &undoManager, "Parameters", createParameterLayout())
 {
     bypassPtr = static_cast <juce::AudioParameterBool*>(apvts.getParameter("bypassID"));
@@ -82,7 +84,7 @@ double AudioPluginAudioProcessor::getTailLengthSeconds() const
 
 int AudioPluginAudioProcessor::getNumPrograms()
 {
-    return 127;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
+    return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
@@ -130,12 +132,17 @@ void AudioPluginAudioProcessor::releaseResources()
     processorDouble.reset();
 }
 
+void AudioPluginAudioProcessor::numChannelsChanged()
+{
+    releaseResources();
+}
+
 void AudioPluginAudioProcessor::numBusesChanged()
 {
     releaseResources();
 }
 
-void AudioPluginAudioProcessor::numChannelsChanged()
+void AudioPluginAudioProcessor::processorLayoutsChanged()
 {
     releaseResources();
 }
