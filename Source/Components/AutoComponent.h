@@ -73,9 +73,10 @@ class AutoComponent : public juce::Component
 {
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
+    using Lambda = const std::function<void()>;
     //==========================================================================
     /** Constructor. */
-    AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda = {}, std::function<juce::String(double)>&& apvtsLambda = {});
+    AutoComponent(juce::AudioProcessor& p, APVTS& apvts, Lambda& paramLambda = {});
 
     //==========================================================================
     /** Component methods. */
@@ -89,8 +90,6 @@ private:
     juce::OwnedArray<SliderWithAttachment> sliders;
     juce::OwnedArray<BoxWithAttachment> boxes;
     juce::OwnedArray<ButtonWithAttachment> buttons;
-
-    const std::function<juce::String(double)> valueSupplier;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AutoComponent)
 };

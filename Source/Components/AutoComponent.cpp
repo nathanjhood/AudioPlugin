@@ -61,7 +61,7 @@ AutoComponentLookAndFeel::AutoComponentLookAndFeel()
   ==============================================================================
 */
 
-AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::function<void()> paramLambda, std::function<juce::String(double)>&& apvtsLambda) : valueSupplier(std::move(apvtsLambda) )
+AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, Lambda& paramLambda)
 {
     auto addSlider = [=, &apvts] (juce::AudioParameterFloat* param)
     {
@@ -75,8 +75,7 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, std::functio
 
         newSlide->slider.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
         newSlide->slider.setName (param->name);
-        newSlide->slider.textFromValueFunction = valueSupplier;
-        //newSlide->slider.textFromValueFunction = nullptr; // @TODO: Don't override lambda from VTS
+        newSlide->slider.textFromValueFunction = nullptr; // @TODO: Don't override lambda from VTS
         newSlide->slider.setNumDecimalPlacesToDisplay (2);
         newSlide->slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 60, 16);
         newSlide->slider.onValueChange = paramLambda;
@@ -199,31 +198,44 @@ void AutoComponent::resized()
     /** This is generally where you'll want to lay out the positions of any
     /** subcomponents in your editor... */
     
+    auto width = getWidth();
+    auto height = getHeight();
+    auto bounds = getBounds();
+
+    auto absCentreX = getWidth() / 3;
+    auto absCentreY = getHeight() / 3;
+
     int x = 5;
-    bool first = true;
+    bool newLine = true;
 
     for (auto* s : sliders)
     {
-        int offset = first ? 0 : 20;
-        s->slider.setBounds (x - offset, 15, 85, 80);
+        int offset = newLine ? 0 : 20;
+        s->slider.setBounds (x - offset, absCentreY, 85, 80);
         x = s->slider.getRight();
-        first = false;
+        newLine = false;
     }
+
+    x = 30;
+    newLine = true;
 
     for (auto* b : boxes)
     {
-        int offset = first ? 0 : 0;
-        b->box.setBounds (x - offset, 40, 70, 20);
+        int offset = newLine ? 0 : -5;
+        b->box.setBounds (x - offset, absCentreY + 140, 70, 20);
         x = b->box.getRight();
-        first = false;
+        newLine = false;
     }
+
+    x = 30;
+    newLine = true;
 
     for (auto* b : buttons)
     {
-        int offset = first ? 0 : 0;
-        b->button.setBounds (x - offset, 40, 70, 20);
+        int offset = newLine ? 0 : -5;
+        b->button.setBounds (x - offset, absCentreY - 70, 70, 20);
         x = b->button.getRight();
-        first = false;
+        newLine = false;
     }
 }
 //==============================================================================
