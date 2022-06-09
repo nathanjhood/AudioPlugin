@@ -51,26 +51,27 @@ void Parameters::setParameterLayout(Params& params)
     juce::ignoreUnused(inMeter);
     juce::ignoreUnused(outMeter);
 
-    //std::function<juce::String(bool, int)> textFromBool;
-    //std::function<bool()> boolFromText;
-
-    params.add(std::make_unique<juce::AudioParameterFloat>("frequencyID", "Frequency", freqRange, 632.45f, frequency, genParam));
-    params.add(std::make_unique<juce::AudioParameterFloat>("resonanceID", "Resonance", resRange, 00.10f, reso, genParam));
-    params.add(std::make_unique<juce::AudioParameterFloat>("gainID", "Gain", gainRange, 00.00f, decibels));
-    params.add(std::make_unique<juce::AudioParameterChoice>("typeID", "Type", fString, 0));
+    params.add
+        //======================================================================
+        (std::make_unique<juce::AudioProcessorParameterGroup>("BandOneID", "0", "seperator",
+            //==================================================================
+            std::make_unique<juce::AudioParameterFloat>("frequencyID", "Frequency", freqRange, 632.455f, frequency, genParam),
+            std::make_unique<juce::AudioParameterFloat>("resonanceID", "Resonance", resRange, 00.10f, reso, genParam),
+            std::make_unique<juce::AudioParameterFloat>("gainID", "Gain", gainRange, 00.00f, decibels),
+            std::make_unique<juce::AudioParameterChoice>("typeID", "Type", fString, 0)
+            //==================================================================
+            ));
 
     params.add
-        //==========================================================================
-       (std::make_unique<juce::AudioProcessorParameterGroup>("masterID", "0", "seperator",
+        //======================================================================
+        (std::make_unique<juce::AudioProcessorParameterGroup>("masterID", "1", "seperator",
             //==================================================================
             std::make_unique<juce::AudioParameterChoice>("osID", "Oversampling", osString, 0),
             std::make_unique<juce::AudioParameterFloat>("outputID", "Output", outputRange, 00.00f, decibels, outParam),
             std::make_unique<juce::AudioParameterFloat>("mixID", "Mix", mixRange, 100.00f, percentage, genParam),
-            std::make_unique<juce::AudioParameterFloat>("nID", "NullF", mixRange, 100.00f, percentage, genParam),
-            std::make_unique<juce::AudioParameterBool>("bypassID", "Bypass", false),
-            std::make_unique<juce::AudioParameterBool>("nullID", "Null", false)
-        //======================================================================
-        ));
-
-    
+            std::make_unique<juce::AudioParameterBool>("bypassID", "Bypass", false)
+            //==================================================================
+            ));
 }
+
+//==============================================================================
