@@ -25,16 +25,16 @@ ProcessWrapper<SampleType>::ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& 
         overSample[i] = std::make_unique<juce::dsp::Oversampling<SampleType>>
         (spec.numChannels, i, osFilter, true, false);
 
-    frequencyPtr = static_cast         <juce::AudioParameterFloat*>        (state.getParameter("frequencyID"));
+    frequencyPtr = dynamic_cast         <juce::AudioParameterFloat*>        (state.getParameter("frequencyID"));
     jassert(frequencyPtr != nullptr);
 
-    resonancePtr = static_cast         <juce::AudioParameterFloat*>        (state.getParameter("resonanceID"));
+    resonancePtr = dynamic_cast         <juce::AudioParameterFloat*>        (state.getParameter("resonanceID"));
     jassert(resonancePtr != nullptr);
 
-    gainPtr = static_cast              <juce::AudioParameterFloat*>        (state.getParameter("gainID"));
+    gainPtr = dynamic_cast              <juce::AudioParameterFloat*>        (state.getParameter("gainID"));
     jassert(gainPtr != nullptr);
 
-    typePtr = static_cast <juce::AudioParameterChoice*>(state.getParameter("typeID"));
+    typePtr = dynamic_cast <juce::AudioParameterChoice*>(state.getParameter("typeID"));
 
     osPtr = dynamic_cast <juce::AudioParameterChoice*> (state.getParameter("osID"));
     outputPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("outputID"));
@@ -142,6 +142,7 @@ void ProcessWrapper<SampleType>::setOversampling()
         prevOS = curOS;
         mixer.reset();
         biquad.reset(static_cast<SampleType>(0));
+        biquad.sampleRate = spec.sampleRate * overSamplingFactor;
         output.reset();
     }
 }
