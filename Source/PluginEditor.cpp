@@ -11,7 +11,14 @@
 
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p, APVTS& apvts, juce::UndoManager& um)
-    : juce::AudioProcessorEditor(&p), audioProcessor(p), state(apvts), undoManager(um), knobComponents(p, apvts), buttonComponents(p, apvts), comboBoxComponents(p, apvts)
+    : 
+    juce::AudioProcessorEditor(&p), 
+    audioProcessor(p), 
+    state(apvts), 
+    undoManager(um), 
+    knobComponents(p, apvts), 
+    buttonComponents(p, apvts), 
+    comboBoxComponents(p, apvts)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -24,7 +31,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
     addAndMakeVisible(redoButton);
     undoButton.onClick = [this] { undoManager.undo(); };
     redoButton.onClick = [this] { undoManager.redo(); };
-    setResizable(true, false);
+    setResizable(true, true);
 
     startTimerHz(24);
 }
@@ -49,7 +56,7 @@ void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
 
     //// draw an outline around the component
     g.setColour(juce::Colours::black);
-    g.drawRect(getLocalBounds(), 5);
+    g.drawRect(getLocalBounds(), 2);
 
     // Add project info text to background here
     g.setColour (juce::Colours::antiquewhite);
