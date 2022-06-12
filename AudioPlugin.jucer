@@ -20,6 +20,8 @@
         <FILE id="qQaLMY" name="AutoFader.h" compile="0" resource="0" file="Source/Components/AutoFader.h"/>
         <FILE id="CVVTMm" name="AutoKnob.cpp" compile="1" resource="0" file="Source/Components/AutoKnob.cpp"/>
         <FILE id="qSUIdW" name="AutoKnob.h" compile="0" resource="0" file="Source/Components/AutoKnob.h"/>
+        <FILE id="BgYUD0" name="AutoLambdas.cpp" compile="1" resource="0" file="Source/Components/AutoLambdas.cpp"/>
+        <FILE id="LvejT4" name="AutoLambdas.h" compile="0" resource="0" file="Source/Components/AutoLambdas.h"/>
       </GROUP>
       <GROUP id="{35E5A888-39FB-6009-A0B8-9F6C584AF5E5}" name="Modules">
         <FILE id="ltDltf" name="Biquads.cpp" compile="1" resource="0" file="Source/Modules/Biquads.cpp"/>
