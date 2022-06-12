@@ -25,21 +25,11 @@ ProcessWrapper<SampleType>::ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& 
         overSample[i] = std::make_unique<juce::dsp::Oversampling<SampleType>>
         (spec.numChannels, i, osFilter, true, false);
 
-    frequencyPtr = dynamic_cast         <juce::AudioParameterFloat*>        (state.getParameter("frequencyID"));
-    jassert(frequencyPtr != nullptr);
-
-    resonancePtr = dynamic_cast         <juce::AudioParameterFloat*>        (state.getParameter("resonanceID"));
-    jassert(resonancePtr != nullptr);
-
-    gainPtr = dynamic_cast              <juce::AudioParameterFloat*>        (state.getParameter("gainID"));
-    jassert(gainPtr != nullptr);
-
-    typePtr = dynamic_cast <juce::AudioParameterChoice*>(state.getParameter("typeID"));
-
     osPtr = dynamic_cast <juce::AudioParameterChoice*> (state.getParameter("osID"));
     outputPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("outputID"));
     mixPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("mixID"));
     bypassPtr = dynamic_cast <juce::AudioParameterBool*> (state.getParameter("bypassID"));
+    precisionPtr = dynamic_cast <juce::AudioParameterChoice*> (state.getParameter("precisionID"));
 
     jassert(osPtr != nullptr);
     jassert(outputPtr != nullptr);
@@ -64,7 +54,6 @@ void ProcessWrapper<SampleType>::prepare(double sampleRate, int samplesPerBlock)
         overSample[i]->numChannels = (size_t)spec.numChannels;
 
     mixer.prepare(spec);
-    biquad.prepare(spec);
     output.prepare(spec);
 
     reset();
@@ -75,7 +64,6 @@ template <typename SampleType>
 void ProcessWrapper<SampleType>::reset()
 {
     mixer.reset();
-    biquad.reset(static_cast<SampleType>(0));
     output.reset();
 
     for (int i = 0; i < 5; ++i)
@@ -94,16 +82,15 @@ void ProcessWrapper<SampleType>::process(juce::AudioBuffer<SampleType>& buffer, 
     update();
 
     juce::dsp::AudioBlock<SampleType> block(buffer);
+    juce::dsp::AudioBlock<SampleType> osBlock(buffer);
 
     mixer.pushDrySamples(block);
 
-    juce::dsp::AudioBlock<SampleType> osBlock = overSample[curOS]->processSamplesUp(block);
+    osBlock = overSample[curOS]->processSamplesUp(block);
 
     auto context = juce::dsp::ProcessContextReplacing(osBlock);
 
     context.isBypassed = bypassPtr->get();
-
-    biquad.process(context);
 
     output.process(context);
 
@@ -119,15 +106,11 @@ void ProcessWrapper<SampleType>::update()
     spec.maximumBlockSize = audioProcessor.getBlockSize();
     spec.numChannels = audioProcessor.getTotalNumInputChannels();
 
+    audioProcessor.setProcessingPrecision(static_cast<juce::AudioProcessor::ProcessingPrecision>(precisionPtr->getIndex()));
+    
     setOversampling();
 
     mixer.setWetMixProportion(mixPtr->get() * 0.01f);
-
-    biquad.setFrequency(frequencyPtr->get());
-    biquad.setResonance(resonancePtr->get());
-    biquad.setGain(gainPtr->get());
-    biquad.setFilterType(static_cast<FilterType>(typePtr->getIndex()));
-    
 
     output.setGainLinear(juce::Decibels::decibelsToGain(outputPtr->get()));
 }
@@ -141,8 +124,6 @@ void ProcessWrapper<SampleType>::setOversampling()
         overSamplingFactor = 1 << curOS;
         prevOS = curOS;
         mixer.reset();
-        biquad.reset(static_cast<SampleType>(0));
-        biquad.sampleRate = spec.sampleRate * overSamplingFactor;
         output.reset();
     }
 }

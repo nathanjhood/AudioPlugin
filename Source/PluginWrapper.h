@@ -59,21 +59,16 @@ private:
     /** Instantiate objects. */
     juce::dsp::ProcessSpec spec;
     juce::dsp::DryWetMixer<SampleType> mixer;
-    Biquads<SampleType> biquad;
     juce::dsp::Gain<SampleType> output;
 
     //==========================================================================
     /** Parameter pointers. */
 
-    juce::AudioParameterFloat* frequencyPtr{ nullptr };
-    juce::AudioParameterFloat* resonancePtr{ nullptr };
-    juce::AudioParameterFloat* gainPtr{ nullptr };
-    juce::AudioParameterChoice* typePtr{ nullptr };
-
-    juce::AudioParameterChoice*             osPtr                   { nullptr };
-    juce::AudioParameterFloat*              outputPtr               { nullptr };
-    juce::AudioParameterFloat*              mixPtr                  { nullptr };
-    juce::AudioParameterBool*               bypassPtr               { nullptr };
+    juce::AudioParameterChoice* osPtr { nullptr };
+    juce::AudioParameterFloat* outputPtr { nullptr };
+    juce::AudioParameterFloat* mixPtr { nullptr };
+    juce::AudioParameterBool* bypassPtr { nullptr };
+    juce::AudioParameterChoice* precisionPtr { nullptr };
 
     //==========================================================================
     /** Init variables. */
