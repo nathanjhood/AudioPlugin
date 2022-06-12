@@ -21,21 +21,20 @@
 AutoComponentLookAndFeel::AutoComponentLookAndFeel()
 {
     //setColourScheme(LookAndFeel_V4::getMidnightColourScheme());
-    /*LookAndFeel_V4::getLightColourScheme();
-    LookAndFeel_V4::getDarkColourScheme();
-    LookAndFeel_V4::getGreyColourScheme();
-    LookAndFeel_V4::getMidnightColourScheme();*/
+    //LookAndFeel_V4::getLightColourScheme();
+    //LookAndFeel_V4::getDarkColourScheme();
+    //LookAndFeel_V4::getGreyColourScheme();
+    //LookAndFeel_V4::getMidnightColourScheme();*/
 
     ///* Knob style */
-    setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::purple);
-    setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::lightgrey);
-    //setColourScheme();
-    //setColour(Slider::backgroundColourId, juce::Colours::brown);
-    setColour(juce::Slider::thumbColourId, juce::Colours::pink);
+    setColour(juce::Slider::rotarySliderOutlineColourId, juce::Colours::darkgrey);
+    setColour(juce::Slider::rotarySliderFillColourId, juce::Colours::lightslategrey);
+    setColour(juce::Slider::backgroundColourId, juce::Colours::green);
+    setColour(juce::Slider::thumbColourId, juce::Colours::hotpink);
     setColour(juce::Slider::trackColourId, juce::Colours::black);
     setColour(juce::Slider::textBoxTextColourId, juce::Colours::white);
-    setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::grey);
-    setColour(juce::Slider::textBoxHighlightColourId, juce::Colours::blue);
+    setColour(juce::Slider::textBoxBackgroundColourId, juce::Colours::darkgrey);
+    setColour(juce::Slider::textBoxHighlightColourId, juce::Colours::hotpink);
     setColour(juce::Slider::textBoxOutlineColourId, juce::Colours::lightgrey);
 
     //* Button style */
@@ -45,9 +44,9 @@ AutoComponentLookAndFeel::AutoComponentLookAndFeel()
 
     ///* Text Button style */
     //setColour(TextButton::buttonColourId, juce::Colours::grey);
-    setColour(juce::TextButton::buttonOnColourId, juce::Colours::orangered);
+    setColour(juce::TextButton::buttonOnColourId, juce::Colours::hotpink);
     setColour(juce::TextButton::buttonNormal, juce::Colours::darkgrey);
-    setColour(juce::TextButton::buttonOver, juce::Colours::lightgrey);
+    setColour(juce::TextButton::buttonOver, juce::Colours::lightslategrey);
     //setColour(TextButton::buttonDown, juce::Colours::green);
     //setColour(TextButton::textColourOnId, juce::Colours::white);
     //setColour(TextButton::textColourOffId, juce::Colours::transparentWhite);
@@ -61,7 +60,7 @@ AutoComponentLookAndFeel::AutoComponentLookAndFeel()
   ==============================================================================
 */
 
-AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, Lambda& paramLambda)
+AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, Lambda& onValueChange, TextFromVal& textFromValue, ValFromText& valueFromText)
 {
     auto addSlider = [=, &apvts] (juce::AudioParameterFloat* param)
     {
@@ -75,10 +74,11 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, Lambda& para
 
         newSlide->slider.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
         newSlide->slider.setName (param->name);
-        newSlide->slider.textFromValueFunction = nullptr; // @TODO: Don't override lambda from VTS
+        newSlide->slider.textFromValueFunction = textFromValue;
+        newSlide->slider.valueFromTextFunction = valueFromText;
         newSlide->slider.setNumDecimalPlacesToDisplay (2);
         newSlide->slider.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 60, 16);
-        newSlide->slider.onValueChange = paramLambda;
+        newSlide->slider.onValueChange = onValueChange;
 
         sliders.add (newSlide);
     };
@@ -92,7 +92,7 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, Lambda& para
         newBox->box.setName (param->name);
         newBox->box.addItemList (param->choices, 1);
         newBox->box.setSelectedItemIndex (0);
-        newBox->box.onChange = paramLambda;
+        newBox->box.onChange = onValueChange;
 
         newBox->attachment.reset (new ComboBoxAttachment (apvts, param->paramID, newBox->box));
 
@@ -107,7 +107,7 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, Lambda& para
 
         newButton->button.setButtonText (param->name);
         newButton->button.setClickingTogglesState (true);
-        newButton->button.onStateChange = paramLambda;
+        newButton->button.onStateChange = onValueChange;
 
         newButton->attachment.reset (new ButtonAttachment (apvts, param->paramID, newButton->button));
 
@@ -146,7 +146,7 @@ AutoComponent::AutoComponent(juce::AudioProcessor& p, APVTS& apvts, Lambda& para
         }
     }
 
-    setSize (getWidth(), 100);
+    setSize (getWidth(), getHeight());
 }
 
 //==============================================================================
@@ -159,11 +159,10 @@ void AutoComponent::paint (juce::Graphics& g)
     auto paintName = [this, &g] (juce::Component& comp, juce::String name)
     {
         const int height = 20;
-        const int initialY = 2;
-        juce::Rectangle<int> nameBox (comp.getX(), initialY, comp.getWidth(), height);
+        juce::Rectangle<int> nameBox (comp.getX(), comp.getY() - 30, comp.getWidth(), height);
         g.setColour(juce::Colours::antiquewhite);
         g.setFont(15.0f);
-        g.drawFittedText (name, nameBox, juce::Justification::centred, 1);
+        g.drawFittedText (name, nameBox, juce::Justification::centredBottom, 1);
     };
 
     for (auto* s : sliders)
@@ -198,6 +197,9 @@ void AutoComponent::resized()
     /** This is generally where you'll want to lay out the positions of any
     /** subcomponents in your editor... */
     
+    int x = 20;
+    bool first = true;
+
     auto width = getWidth();
     auto height = getHeight();
     auto bounds = getBounds();
@@ -205,37 +207,34 @@ void AutoComponent::resized()
     auto absCentreX = getWidth() / 3;
     auto absCentreY = getHeight() / 3;
 
-    int x = 5;
-    bool newLine = true;
-
     for (auto* s : sliders)
     {
-        int offset = newLine ? 0 : 20;
+        int offset = first ? 0 : 10;
         s->slider.setBounds (x - offset, absCentreY, 85, 80);
         x = s->slider.getRight();
-        newLine = false;
+        first = false;
     }
 
     x = 30;
-    newLine = true;
+    first = true;
 
     for (auto* b : boxes)
     {
-        int offset = newLine ? 0 : -5;
+        int offset = first ? 0 : -5;
         b->box.setBounds (x - offset, absCentreY + 140, 70, 20);
         x = b->box.getRight();
-        newLine = false;
+        first = false;
     }
 
     x = 30;
-    newLine = true;
+    first = true;
 
     for (auto* b : buttons)
     {
-        int offset = newLine ? 0 : -5;
+        int offset = first ? 0 : -5;
         b->button.setBounds (x - offset, absCentreY - 70, 70, 20);
         x = b->button.getRight();
-        newLine = false;
+        first = false;
     }
 }
 //==============================================================================

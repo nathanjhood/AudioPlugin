@@ -74,9 +74,11 @@ class AutoComponent : public juce::Component
 public:
     using APVTS = juce::AudioProcessorValueTreeState;
     using Lambda = const std::function<void()>;
+    using TextFromVal = const std::function<juce::String(double)>;
+    using ValFromText = const std::function<double(juce::String)>;
     //==========================================================================
     /** Constructor. */
-    AutoComponent(juce::AudioProcessor& p, APVTS& apvts, Lambda& paramLambda = {});
+    AutoComponent(juce::AudioProcessor& p, APVTS& apvts, Lambda& onValueChange = {}, TextFromVal& textFromValue = {}, ValFromText& valueFromText = {});
 
     //==========================================================================
     /** Component methods. */
@@ -86,6 +88,7 @@ public:
 private:
     //==========================================================================
     /** Instantiate members. */
+    //Lambda& lambda;
     AutoComponentLookAndFeel lookAndfeel;
     juce::OwnedArray<SliderWithAttachment> sliders;
     juce::OwnedArray<BoxWithAttachment> boxes;

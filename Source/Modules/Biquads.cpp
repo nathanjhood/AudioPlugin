@@ -1,4 +1,4 @@
-/*
+/*/*
   ==============================================================================
 
     Biquads.cpp
@@ -166,18 +166,6 @@ SampleType Biquads<SampleType>::processSample(int channel, SampleType inputValue
     default:
         inputValue = directFormIITransposed(channel, inputValue);
     }
-
-    /*if (transformType == TransformationType::directFormI)
-        inputValue = directFormI(channel, inputValue);
-
-    else if (transformType == TransformationType::directFormII)
-        inputValue = directFormII(channel, inputValue);
-
-    else if (transformType == TransformationType::directFormItransposed)
-        inputValue = directFormITransposed(channel, inputValue);
-
-    else
-        inputValue = directFormIITransposed(channel, inputValue);*/
 
     return inputValue;
 }
