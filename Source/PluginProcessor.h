@@ -25,7 +25,7 @@ public:
     ~AudioPluginAudioProcessor() override;
 
     //==========================================================================
-    juce::AudioProcessorParameter* getBypassParameter() const;
+    juce::AudioProcessorParameter* getBypassParameter() const override;
     bool supportsDoublePrecisionProcessing() const override;
     ProcessingPrecision getProcessingPrecision() const noexcept;
     bool isUsingDoublePrecision() const noexcept;
@@ -82,14 +82,14 @@ public:
 private:
     //==========================================================================
     /** Audio processor members. */
-    Parameters                      parameters              { *this, getAPVTS() };
-    ProcessWrapper<float>           processorFloat          { *this, getAPVTS() };
-    ProcessWrapper<double>          processorDouble         { *this, getAPVTS() };
+    Parameters parameters { *this, getAPVTS() };
+    ProcessWrapper<float> processorFloat { *this, getAPVTS() };
+    ProcessWrapper<double> processorDouble { *this, getAPVTS() };
 
     //==========================================================================
     /** Parameter pointers. */
-    juce::AudioParameterInt*       precisionPtr             { nullptr };
-    juce::AudioParameterBool*       bypassPtr               { nullptr };
+    juce::AudioParameterChoice* precisionPtr { nullptr };
+    juce::AudioParameterBool* bypassPtr { nullptr };
 
     //==========================================================================
     /** Init variables. */
