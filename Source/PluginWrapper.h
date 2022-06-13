@@ -29,7 +29,7 @@ public:
 
     //==========================================================================
     /** Initialises the processor. */
-    void prepare(double sampleRate, int samplesPerBlock);
+    void prepare();
 
     /** Resets the internal state variables of the processor. */
     void reset();
@@ -44,6 +44,8 @@ public:
     //==========================================================================
     /** Sets the oversampling factor. */
     void setOversampling();
+
+    SampleType getLatencySamples() const noexcept;
 
 private:
     //==========================================================================
@@ -68,7 +70,6 @@ private:
     juce::AudioParameterFloat* outputPtr { nullptr };
     juce::AudioParameterFloat* mixPtr { nullptr };
     juce::AudioParameterBool* bypassPtr { nullptr };
-    juce::AudioParameterChoice* precisionPtr { nullptr };
 
     //==========================================================================
     /** Init variables. */
