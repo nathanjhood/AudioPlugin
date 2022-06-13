@@ -29,7 +29,6 @@ ProcessWrapper<SampleType>::ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& 
     outputPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("outputID"));
     mixPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("mixID"));
     bypassPtr = dynamic_cast <juce::AudioParameterBool*> (state.getParameter("bypassID"));
-    precisionPtr = dynamic_cast <juce::AudioParameterChoice*> (state.getParameter("precisionID"));
 
     jassert(osPtr != nullptr);
     jassert(outputPtr != nullptr);
@@ -38,13 +37,13 @@ ProcessWrapper<SampleType>::ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& 
 }
 
 template <typename SampleType>
-void ProcessWrapper<SampleType>::prepare(double sampleRate, int samplesPerBlock)
+void ProcessWrapper<SampleType>::prepare()
 {
     overSamplingFactor = 1 << curOS;
     prevOS = curOS;
 
-    spec.sampleRate = sampleRate;
-    spec.maximumBlockSize = samplesPerBlock;
+    spec.sampleRate = audioProcessor.getSampleRate() * overSamplingFactor;
+    spec.maximumBlockSize = audioProcessor.getBlockSize();
     spec.numChannels = audioProcessor.getTotalNumInputChannels();
 
     for (int i = 0; i < 5; ++i)
@@ -63,14 +62,15 @@ void ProcessWrapper<SampleType>::prepare(double sampleRate, int samplesPerBlock)
 template <typename SampleType>
 void ProcessWrapper<SampleType>::reset()
 {
-    mixer.reset();
-    output.reset();
-
     for (int i = 0; i < 5; ++i)
         overSample[i]->numChannels = (size_t)spec.numChannels;
 
     for (int i = 0; i < 5; ++i)
         overSample[i]->reset();
+
+    mixer.reset();
+    mixer.setWetLatency(getLatencySamples());
+    output.reset();
 }
 
 //==============================================================================
@@ -102,11 +102,9 @@ void ProcessWrapper<SampleType>::process(juce::AudioBuffer<SampleType>& buffer, 
 template <typename SampleType>
 void ProcessWrapper<SampleType>::update()
 {
-    spec.sampleRate = audioProcessor.getSampleRate();
+    spec.sampleRate = audioProcessor.getSampleRate() * overSamplingFactor;
     spec.maximumBlockSize = audioProcessor.getBlockSize();
     spec.numChannels = audioProcessor.getTotalNumInputChannels();
-
-    audioProcessor.setProcessingPrecision(static_cast<juce::AudioProcessor::ProcessingPrecision>(precisionPtr->getIndex()));
     
     setOversampling();
 
@@ -124,8 +122,16 @@ void ProcessWrapper<SampleType>::setOversampling()
         overSamplingFactor = 1 << curOS;
         prevOS = curOS;
         mixer.reset();
+        mixer.setWetLatency(getLatencySamples());
         output.reset();
     }
+}
+
+template <typename SampleType>
+SampleType ProcessWrapper<SampleType>::getLatencySamples() const noexcept
+{
+    // latency of oversampling
+    return overSample[curOS]->getLatencyInSamples();
 }
 
 //==============================================================================

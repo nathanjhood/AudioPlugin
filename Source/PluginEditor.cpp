@@ -27,7 +27,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
     addAndMakeVisible(redoButton);
     undoButton.onClick = [this] { undoManager.undo(); };
     redoButton.onClick = [this] { undoManager.redo(); };
-    undoButton.setLookAndFeel();
     setResizable(true, true);
 
     startTimerHz(60);
