@@ -15,9 +15,6 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor() :
                                     .withOutput("Output",   juce::AudioChannelSet::stereo(), true)),
     apvts (*this, &undoManager, "Parameters", createParameterLayout())
 {
-    precisionPtr = static_cast <juce::AudioParameterChoice*>(apvts.getParameter("precisionID"));
-    jassert(precisionPtr != nullptr);
-
     bypassPtr = static_cast <juce::AudioParameterBool*>(apvts.getParameter("bypassID"));
     jassert(bypassPtr != nullptr);
 }
@@ -119,8 +116,8 @@ void AudioPluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerB
 
     getProcessingPrecision();
 
-    processorFloat.prepare(sampleRate, samplesPerBlock);
-    processorDouble.prepare(sampleRate, samplesPerBlock);
+    processorFloat.prepare();
+    processorDouble.prepare();
 }
 
 void AudioPluginAudioProcessor::releaseResources()
@@ -134,17 +131,26 @@ void AudioPluginAudioProcessor::releaseResources()
 
 void AudioPluginAudioProcessor::numChannelsChanged()
 {
-    releaseResources();
+    processorFloat.reset();
+    processorDouble.reset();
+    processorFloat.prepare();
+    processorDouble.prepare();
 }
 
 void AudioPluginAudioProcessor::numBusesChanged()
 {
-    releaseResources();
+    processorFloat.reset();
+    processorDouble.reset();
+    processorFloat.prepare();
+    processorDouble.prepare();
 }
 
 void AudioPluginAudioProcessor::processorLayoutsChanged()
 {
-    releaseResources();
+    processorFloat.reset();
+    processorDouble.reset();
+    processorFloat.prepare();
+    processorDouble.prepare();
 }
 
 bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
@@ -172,11 +178,6 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, j
         juce::ScopedNoDenormals noDenormals;
 
         processorFloat.process(buffer, midiMessages);
-
-        // clip input to +9 dB
-        for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
-            juce::FloatVectorOperations::clip(buffer.getWritePointer(ch),
-                buffer.getWritePointer(ch), -0.5f, 8.0f, buffer.getNumSamples());
     }
 
     else
@@ -192,11 +193,6 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, 
         juce::ScopedNoDenormals noDenormals;
 
         processorDouble.process(buffer, midiMessages);
-
-        // clip input to +9 dB
-        for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
-            juce::FloatVectorOperations::clip(buffer.getWritePointer(ch),
-                buffer.getWritePointer(ch), -8.0f, 0.5f, buffer.getNumSamples());
     }
 
     else
@@ -208,22 +204,12 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, 
 
 void AudioPluginAudioProcessor::processBlockBypassed(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    // clip input to +9 dB
-    for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
-        juce::FloatVectorOperations::clip(buffer.getWritePointer(ch),
-            buffer.getWritePointer(ch), -0.75f, 8.0f, buffer.getNumSamples());
-
     juce::ignoreUnused(buffer);
     juce::ignoreUnused(midiMessages);
 }
 
 void AudioPluginAudioProcessor::processBlockBypassed(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
 {
-    // clip input to +9 dB
-    for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
-        juce::FloatVectorOperations::clip(buffer.getWritePointer(ch),
-            buffer.getWritePointer(ch), -8.0f, 0.75f, buffer.getNumSamples());
-
     juce::ignoreUnused(buffer);
     juce::ignoreUnused(midiMessages);
 }
