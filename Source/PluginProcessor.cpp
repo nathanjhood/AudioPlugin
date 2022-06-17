@@ -13,7 +13,10 @@
 AudioPluginAudioProcessor::AudioPluginAudioProcessor() : 
     AudioProcessor(BusesProperties().withInput("Input",     juce::AudioChannelSet::stereo(), true)
                                     .withOutput("Output",   juce::AudioChannelSet::stereo(), true)),
-    apvts (*this, &undoManager, "Parameters", createParameterLayout())
+    apvts (*this, &undoManager, "Parameters", createParameterLayout() ),
+    parameters(*this, getAPVTS()),
+    processorFloat(*this, getAPVTS(), getSpec()),
+    processorDouble(*this, getAPVTS(), getSpec())
 {
 }
 
@@ -133,8 +136,8 @@ void AudioPluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerB
 
     getProcessingPrecision();
 
-    processorFloat.prepare();
-    processorDouble.prepare();
+    processorFloat.prepare( getSpec() );
+    processorDouble.prepare( getSpec() );
 }
 
 void AudioPluginAudioProcessor::releaseResources()
@@ -150,24 +153,24 @@ void AudioPluginAudioProcessor::numChannelsChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
-    processorFloat.prepare();
-    processorDouble.prepare();
+    processorFloat.prepare( getSpec() );
+    processorDouble.prepare( getSpec() );
 }
 
 void AudioPluginAudioProcessor::numBusesChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
-    processorFloat.prepare();
-    processorDouble.prepare();
+    processorFloat.prepare( getSpec() );
+    processorDouble.prepare( getSpec() );
 }
 
 void AudioPluginAudioProcessor::processorLayoutsChanged()
 {
     processorFloat.reset();
     processorDouble.reset();
-    processorFloat.prepare();
-    processorDouble.prepare();
+    processorFloat.prepare( getSpec() );
+    processorDouble.prepare( getSpec() );
 }
 
 bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
