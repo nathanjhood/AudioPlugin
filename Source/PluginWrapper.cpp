@@ -12,7 +12,7 @@
 #include "PluginProcessor.h"
 
 template <typename SampleType>
-ProcessWrapper<SampleType>::ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& apvts) : spec(), audioProcessor(p), state(apvts)
+ProcessWrapper<SampleType>::ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& apvts, juce::dsp::ProcessSpec& spec) : audioProcessor(p), state(apvts), setup(spec)
 {
     spec.sampleRate = audioProcessor.getSampleRate() * oversamplingFactor;
     spec.maximumBlockSize = audioProcessor.getBlockSize();
@@ -22,7 +22,7 @@ ProcessWrapper<SampleType>::ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& 
 
     for (int i = 0; i < 5; ++i)
         oversampler[i] = std::make_unique<juce::dsp::Oversampling<SampleType>>
-        (spec.numChannels, i, osFilter, true, false);
+        (setup.numChannels, i, osFilter, true, false);
 
     osPtr = dynamic_cast <juce::AudioParameterChoice*> (state.getParameter("osID"));
     outputPtr = dynamic_cast <juce::AudioParameterFloat*> (state.getParameter("outputID"));
@@ -36,14 +36,14 @@ ProcessWrapper<SampleType>::ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& 
 }
 
 template <typename SampleType>
-void ProcessWrapper<SampleType>::prepare()
+void ProcessWrapper<SampleType>::prepare(juce::dsp::ProcessSpec& spec)
 {
     oversamplingFactor = 1 << curOS;
     prevOS = curOS;
 
-    spec.sampleRate = audioProcessor.getSampleRate() * oversamplingFactor;
-    spec.maximumBlockSize = audioProcessor.getBlockSize();
-    spec.numChannels = audioProcessor.getTotalNumInputChannels();
+    setup.sampleRate = audioProcessor.getSampleRate() * oversamplingFactor;
+    setup.maximumBlockSize = audioProcessor.getBlockSize();
+    setup.numChannels = audioProcessor.getTotalNumInputChannels();
 
     for (int i = 0; i < 5; ++i)
         oversampler[i]->initProcessing(spec.maximumBlockSize);
@@ -62,7 +62,7 @@ template <typename SampleType>
 void ProcessWrapper<SampleType>::reset()
 {
     for (int i = 0; i < 5; ++i)
-        oversampler[i]->numChannels = (size_t)spec.numChannels;
+        oversampler[i]->numChannels = (size_t)setup.numChannels;
 
     for (int i = 0; i < 5; ++i)
         oversampler[i]->reset();
@@ -101,9 +101,9 @@ void ProcessWrapper<SampleType>::process(juce::AudioBuffer<SampleType>& buffer, 
 template <typename SampleType>
 void ProcessWrapper<SampleType>::update()
 {
-    spec.sampleRate = audioProcessor.getSampleRate() * oversamplingFactor;
-    spec.maximumBlockSize = audioProcessor.getBlockSize();
-    spec.numChannels = audioProcessor.getTotalNumInputChannels();
+    setup.sampleRate = audioProcessor.getSampleRate() * oversamplingFactor;
+    setup.maximumBlockSize = audioProcessor.getBlockSize();
+    setup.numChannels = audioProcessor.getTotalNumInputChannels();
     
     audioProcessor.setBypassParameter(bypassPtr);
 

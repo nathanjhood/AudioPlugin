@@ -25,11 +25,11 @@ public:
     using APVTS = juce::AudioProcessorValueTreeState;
     //==========================================================================
     /** Constructor. */
-    ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& apvts);
+    ProcessWrapper(AudioPluginAudioProcessor& p, APVTS& apvts, juce::dsp::ProcessSpec& spec);
 
     //==========================================================================
     /** Initialises the processor. */
-    void prepare();
+    void prepare(juce::dsp::ProcessSpec& spec);
 
     /** Resets the internal state variables of the processor. */
     void reset();
@@ -47,8 +47,7 @@ public:
 
     SampleType getLatencySamples() const noexcept;
 
-    juce::dsp::ProcessSpec spec;
-    juce::dsp::ProcessSpec& getSpec() { return spec; };
+    
 
 private:
     //==========================================================================
@@ -56,6 +55,7 @@ private:
     // access the processor object that created it.
     AudioPluginAudioProcessor& audioProcessor;
     APVTS& state;
+    juce::dsp::ProcessSpec& setup;
 
     //==========================================================================
     std::unique_ptr<juce::dsp::Oversampling<SampleType>> oversampler[5];
