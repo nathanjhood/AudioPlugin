@@ -26,6 +26,8 @@ public:
 
     //==========================================================================
     juce::AudioProcessorParameter* getBypassParameter() const override;
+    bool isBypassed() const noexcept;
+    void setBypassParameter(juce::AudioParameterBool* newBypass) noexcept;
     bool supportsDoublePrecisionProcessing() const override;
     ProcessingPrecision getProcessingPrecision() const noexcept;
     bool isUsingDoublePrecision() const noexcept;
@@ -89,7 +91,7 @@ private:
     //==========================================================================
     /** Parameter pointers. */
     juce::AudioParameterChoice* precisionPtr { nullptr };
-    juce::AudioParameterBool* bypassPtr { nullptr };
+    juce::AudioParameterBool* bypassState { nullptr };
 
     //==========================================================================
     /** Init variables. */

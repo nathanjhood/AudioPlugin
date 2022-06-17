@@ -15,8 +15,6 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor() :
                                     .withOutput("Output",   juce::AudioChannelSet::stereo(), true)),
     apvts (*this, &undoManager, "Parameters", createParameterLayout())
 {
-    bypassPtr = static_cast <juce::AudioParameterBool*>(apvts.getParameter("bypassID"));
-    jassert(bypassPtr != nullptr);
 }
 
 AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
@@ -26,7 +24,22 @@ AudioPluginAudioProcessor::~AudioPluginAudioProcessor()
 //==============================================================================
 juce::AudioProcessorParameter* AudioPluginAudioProcessor::getBypassParameter() const
 {
-    return bypassPtr;
+    return bypassState;
+}
+
+bool AudioPluginAudioProcessor::isBypassed() const noexcept
+{
+    return bypassState->get() == true;
+}
+
+void AudioPluginAudioProcessor::setBypassParameter(juce::AudioParameterBool* newBypass) noexcept
+{
+    if (bypassState != newBypass)
+    {
+        bypassState = newBypass;
+        releaseResources();
+        reset();
+    }
 }
 
 bool AudioPluginAudioProcessor::supportsDoublePrecisionProcessing() const
@@ -46,6 +59,10 @@ bool AudioPluginAudioProcessor::isUsingDoublePrecision() const noexcept
 
 void AudioPluginAudioProcessor::setProcessingPrecision(ProcessingPrecision newPrecision) noexcept
 {
+    // If you hit this assertion then you're trying to use double precision
+    // processing on a processor which does not support it!
+    jassert(newPrecision != doublePrecision || supportsDoublePrecisionProcessing());
+
     if (processingPrecision != newPrecision)
     {
         processingPrecision = newPrecision;
@@ -173,7 +190,9 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 //==============================================================================
 void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    if (bypassPtr->get() == false)
+    getProcessingPrecision();
+
+    if (bypassState->get() == false)
     {
         juce::ScopedNoDenormals noDenormals;
 
@@ -188,7 +207,9 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, j
 
 void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
 {
-    if (bypassPtr->get() == false)
+    getProcessingPrecision();
+
+    if (bypassState->get() == false)
     {
         juce::ScopedNoDenormals noDenormals;
 
@@ -204,14 +225,16 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<double>& buffer, 
 
 void AudioPluginAudioProcessor::processBlockBypassed(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    juce::ignoreUnused(buffer);
-    juce::ignoreUnused(midiMessages);
+    getProcessingPrecision();
+
+    juce::ignoreUnused(buffer, midiMessages);
 }
 
 void AudioPluginAudioProcessor::processBlockBypassed(juce::AudioBuffer<double>& buffer, juce::MidiBuffer& midiMessages)
 {
-    juce::ignoreUnused(buffer);
-    juce::ignoreUnused(midiMessages);
+    getProcessingPrecision();
+
+    juce::ignoreUnused(buffer, midiMessages);
 }
 
 //==============================================================================
