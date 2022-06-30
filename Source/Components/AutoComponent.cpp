@@ -52,6 +52,11 @@ AutoComponentLookAndFeel::AutoComponentLookAndFeel()
     //setColour(TextButton::textColourOffId, juce::Colours::transparentWhite);
 }
 
+AutoComponentLookAndFeel::~AutoComponentLookAndFeel()
+{
+    
+}
+
 /*
   ==============================================================================
 
